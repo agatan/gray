@@ -2,6 +2,6 @@ package token
 
 type Token struct {
 	PosImpl
-	Kind Kind
+	Kind int
 	Lit  string
 }
