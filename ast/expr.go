@@ -25,7 +25,7 @@ type (
 	// BasicLit represent literal nodes.
 	BasicLit struct {
 		ExprImpl
-		Kind token.Token // Kind should be token.UNIT, token.BOOL or token.INT
+		Kind token.Kind // Kind should be token.UNIT, token.BOOL or token.INT
 		Lit  string
 	}
 
