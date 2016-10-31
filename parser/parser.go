@@ -9,7 +9,7 @@ import (
 	"github.com/agatan/gray/token"
 )
 
-//line parser.go.y:12
+//line parser.go.y:13
 type parserSymType struct {
 	yys  int
 	expr ast.Expr
@@ -43,41 +43,41 @@ var parserExca = [...]int{
 	-2, 0,
 }
 
-const parserNprod = 5
+const parserNprod = 6
 const parserPrivate = 57344
 
 var parserTokenNames []string
 var parserStates []string
 
-const parserLast = 5
+const parserLast = 6
 
 var parserAct = [...]int{
 
-	2, 3, 4, 5, 1,
+	3, 4, 5, 6, 1, 2,
 }
 var parserPact = [...]int{
 
-	-4, -1000, -1000, -1000, -1000, -1000,
+	-4, -1000, -1000, -1000, -1000, -1000, -1000,
 }
 var parserPgo = [...]int{
 
-	0, 4,
+	0, 5, 4,
 }
 var parserR1 = [...]int{
 
-	0, 1, 1, 1, 1,
+	0, 2, 1, 1, 1, 1,
 }
 var parserR2 = [...]int{
 
-	0, 1, 1, 1, 1,
+	0, 1, 1, 1, 1, 1,
 }
 var parserChk = [...]int{
 
-	-1000, -1, 4, 5, 6, 7,
+	-1000, -2, -1, 4, 5, 6, 7,
 }
 var parserDef = [...]int{
 
-	0, -2, 1, 2, 3, 4,
+	0, -2, 1, 2, 3, 4, 5,
 }
 var parserTok1 = [...]int{
 
@@ -430,43 +430,40 @@ parserdefault:
 
 	case 1:
 		parserDollar = parserS[parserpt-1 : parserpt+1]
-		//line parser.go.y:23
+		//line parser.go.y:24
 		{
-			parserVAL.expr = &ast.Ident{Name: parserDollar[1].tok.Lit}
-			parserVAL.expr.SetPosition(parserDollar[1].tok.Position())
+			parserVAL.expr = parserDollar[1].expr
 			if l, ok := parserlex.(*Lexer); ok {
 				l.expr = parserVAL.expr
 			}
 		}
 	case 2:
 		parserDollar = parserS[parserpt-1 : parserpt+1]
-		//line parser.go.y:31
+		//line parser.go.y:33
 		{
-			parserVAL.expr = &ast.BasicLit{Kind: token.INT, Lit: parserDollar[1].tok.Lit}
+			parserVAL.expr = &ast.Ident{Name: parserDollar[1].tok.Lit}
 			parserVAL.expr.SetPosition(parserDollar[1].tok.Position())
-			if l, ok := parserlex.(*Lexer); ok {
-				l.expr = parserVAL.expr
-			}
 		}
 	case 3:
 		parserDollar = parserS[parserpt-1 : parserpt+1]
-		//line parser.go.y:39
+		//line parser.go.y:38
 		{
-			parserVAL.expr = &ast.BasicLit{Kind: token.BOOL, Lit: parserDollar[1].tok.Lit}
+			parserVAL.expr = &ast.BasicLit{Kind: token.INT, Lit: parserDollar[1].tok.Lit}
 			parserVAL.expr.SetPosition(parserDollar[1].tok.Position())
-			if l, ok := parserlex.(*Lexer); ok {
-				l.expr = parserVAL.expr
-			}
 		}
 	case 4:
 		parserDollar = parserS[parserpt-1 : parserpt+1]
-		//line parser.go.y:47
+		//line parser.go.y:43
 		{
 			parserVAL.expr = &ast.BasicLit{Kind: token.BOOL, Lit: parserDollar[1].tok.Lit}
 			parserVAL.expr.SetPosition(parserDollar[1].tok.Position())
-			if l, ok := parserlex.(*Lexer); ok {
-				l.expr = parserVAL.expr
-			}
+		}
+	case 5:
+		parserDollar = parserS[parserpt-1 : parserpt+1]
+		//line parser.go.y:48
+		{
+			parserVAL.expr = &ast.BasicLit{Kind: token.BOOL, Lit: parserDollar[1].tok.Lit}
+			parserVAL.expr.SetPosition(parserDollar[1].tok.Position())
 		}
 	}
 	goto parserstack /* stack new state and value */

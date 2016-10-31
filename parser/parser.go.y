@@ -7,6 +7,7 @@ import (
 )
 %}
 
+%type<expr> primitive_expr
 %type<expr> expr
 
 %union{
@@ -19,35 +20,32 @@ import (
 %%
 
 expr:
+	primitive_expr
+	{
+		$$ = $1
+		if l, ok := parserlex.(*Lexer); ok {
+			l.expr = $$
+		}
+	}
+
+primitive_expr:
 	IDENT
 	{
 		$$ = &ast.Ident{Name: $1.Lit}
 		$$.SetPosition($1.Position())
-		if l, ok := parserlex.(*Lexer); ok {
-			l.expr = $$
-		}
 	}
 	| INT
 	{
 		$$ = &ast.BasicLit{Kind: token.INT, Lit: $1.Lit}
 		$$.SetPosition($1.Position())
-		if l, ok := parserlex.(*Lexer); ok {
-			l.expr = $$
-		}
 	}
 	| TRUE
 	{
 		$$ = &ast.BasicLit{Kind: token.BOOL, Lit: $1.Lit}
 		$$.SetPosition($1.Position())
-		if l, ok := parserlex.(*Lexer); ok {
-			l.expr = $$
-		}
 	}
 	| FALSE
 	{
 		$$ = &ast.BasicLit{Kind: token.BOOL, Lit: $1.Lit}
 		$$.SetPosition($1.Position())
-		if l, ok := parserlex.(*Lexer); ok {
-			l.expr = $$
-		}
 	}
