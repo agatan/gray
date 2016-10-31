@@ -23,7 +23,7 @@ expr:
 	primitive_expr
 	{
 		$$ = $1
-		if l, ok := parserlex.(*Lexer); ok {
+		if l, ok := yylex.(*Lexer); ok {
 			l.expr = $$
 		}
 	}

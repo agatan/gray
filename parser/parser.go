@@ -10,7 +10,7 @@ import (
 )
 
 //line parser.go.y:13
-type parserSymType struct {
+type yySymType struct {
 	yys  int
 	expr ast.Expr
 	tok  token.Token
@@ -21,7 +21,7 @@ const INT = 57347
 const TRUE = 57348
 const FALSE = 57349
 
-var parserToknames = [...]string{
+var yyToknames = [...]string{
 	"$end",
 	"error",
 	"$unk",
@@ -30,68 +30,68 @@ var parserToknames = [...]string{
 	"TRUE",
 	"FALSE",
 }
-var parserStatenames = [...]string{}
+var yyStatenames = [...]string{}
 
-const parserEofCode = 1
-const parserErrCode = 2
-const parserInitialStackSize = 16
+const yyEofCode = 1
+const yyErrCode = 2
+const yyInitialStackSize = 16
 
 //line yacctab:1
-var parserExca = [...]int{
+var yyExca = [...]int{
 	-1, 1,
 	1, -1,
 	-2, 0,
 }
 
-const parserNprod = 6
-const parserPrivate = 57344
+const yyNprod = 6
+const yyPrivate = 57344
 
-var parserTokenNames []string
-var parserStates []string
+var yyTokenNames []string
+var yyStates []string
 
-const parserLast = 6
+const yyLast = 6
 
-var parserAct = [...]int{
+var yyAct = [...]int{
 
 	3, 4, 5, 6, 1, 2,
 }
-var parserPact = [...]int{
+var yyPact = [...]int{
 
 	-4, -1000, -1000, -1000, -1000, -1000, -1000,
 }
-var parserPgo = [...]int{
+var yyPgo = [...]int{
 
 	0, 5, 4,
 }
-var parserR1 = [...]int{
+var yyR1 = [...]int{
 
 	0, 2, 1, 1, 1, 1,
 }
-var parserR2 = [...]int{
+var yyR2 = [...]int{
 
 	0, 1, 1, 1, 1, 1,
 }
-var parserChk = [...]int{
+var yyChk = [...]int{
 
 	-1000, -2, -1, 4, 5, 6, 7,
 }
-var parserDef = [...]int{
+var yyDef = [...]int{
 
 	0, -2, 1, 2, 3, 4, 5,
 }
-var parserTok1 = [...]int{
+var yyTok1 = [...]int{
 
 	1,
 }
-var parserTok2 = [...]int{
+var yyTok2 = [...]int{
 
 	2, 3, 4, 5, 6, 7,
 }
-var parserTok3 = [...]int{
+var yyTok3 = [...]int{
 	0,
 }
 
-var parserErrorMessages = [...]struct {
+var yyErrorMessages = [...]struct {
 	state int
 	token int
 	msg   string
@@ -102,76 +102,76 @@ var parserErrorMessages = [...]struct {
 /*	parser for yacc output	*/
 
 var (
-	parserDebug        = 0
-	parserErrorVerbose = false
+	yyDebug        = 0
+	yyErrorVerbose = false
 )
 
-type parserLexer interface {
-	Lex(lval *parserSymType) int
+type yyLexer interface {
+	Lex(lval *yySymType) int
 	Error(s string)
 }
 
-type parserParser interface {
-	Parse(parserLexer) int
+type yyParser interface {
+	Parse(yyLexer) int
 	Lookahead() int
 }
 
-type parserParserImpl struct {
-	lval  parserSymType
-	stack [parserInitialStackSize]parserSymType
+type yyParserImpl struct {
+	lval  yySymType
+	stack [yyInitialStackSize]yySymType
 	char  int
 }
 
-func (p *parserParserImpl) Lookahead() int {
+func (p *yyParserImpl) Lookahead() int {
 	return p.char
 }
 
-func parserNewParser() parserParser {
-	return &parserParserImpl{}
+func yyNewParser() yyParser {
+	return &yyParserImpl{}
 }
 
-const parserFlag = -1000
+const yyFlag = -1000
 
-func parserTokname(c int) string {
-	if c >= 1 && c-1 < len(parserToknames) {
-		if parserToknames[c-1] != "" {
-			return parserToknames[c-1]
+func yyTokname(c int) string {
+	if c >= 1 && c-1 < len(yyToknames) {
+		if yyToknames[c-1] != "" {
+			return yyToknames[c-1]
 		}
 	}
 	return __yyfmt__.Sprintf("tok-%v", c)
 }
 
-func parserStatname(s int) string {
-	if s >= 0 && s < len(parserStatenames) {
-		if parserStatenames[s] != "" {
-			return parserStatenames[s]
+func yyStatname(s int) string {
+	if s >= 0 && s < len(yyStatenames) {
+		if yyStatenames[s] != "" {
+			return yyStatenames[s]
 		}
 	}
 	return __yyfmt__.Sprintf("state-%v", s)
 }
 
-func parserErrorMessage(state, lookAhead int) string {
+func yyErrorMessage(state, lookAhead int) string {
 	const TOKSTART = 4
 
-	if !parserErrorVerbose {
+	if !yyErrorVerbose {
 		return "syntax error"
 	}
 
-	for _, e := range parserErrorMessages {
+	for _, e := range yyErrorMessages {
 		if e.state == state && e.token == lookAhead {
 			return "syntax error: " + e.msg
 		}
 	}
 
-	res := "syntax error: unexpected " + parserTokname(lookAhead)
+	res := "syntax error: unexpected " + yyTokname(lookAhead)
 
 	// To match Bison, suggest at most four expected tokens.
 	expected := make([]int, 0, 4)
 
 	// Look for shiftable tokens.
-	base := parserPact[state]
-	for tok := TOKSTART; tok-1 < len(parserToknames); tok++ {
-		if n := base + tok; n >= 0 && n < parserLast && parserChk[parserAct[n]] == tok {
+	base := yyPact[state]
+	for tok := TOKSTART; tok-1 < len(yyToknames); tok++ {
+		if n := base + tok; n >= 0 && n < yyLast && yyChk[yyAct[n]] == tok {
 			if len(expected) == cap(expected) {
 				return res
 			}
@@ -179,16 +179,16 @@ func parserErrorMessage(state, lookAhead int) string {
 		}
 	}
 
-	if parserDef[state] == -2 {
+	if yyDef[state] == -2 {
 		i := 0
-		for parserExca[i] != -1 || parserExca[i+1] != state {
+		for yyExca[i] != -1 || yyExca[i+1] != state {
 			i += 2
 		}
 
 		// Look for tokens that we accept or reduce.
-		for i += 2; parserExca[i] >= 0; i += 2 {
-			tok := parserExca[i]
-			if tok < TOKSTART || parserExca[i+1] == 0 {
+		for i += 2; yyExca[i] >= 0; i += 2 {
+			tok := yyExca[i]
+			if tok < TOKSTART || yyExca[i+1] == 0 {
 				continue
 			}
 			if len(expected) == cap(expected) {
@@ -198,7 +198,7 @@ func parserErrorMessage(state, lookAhead int) string {
 		}
 
 		// If the default action is to accept or reduce, give up.
-		if parserExca[i+1] != 0 {
+		if yyExca[i+1] != 0 {
 			return res
 		}
 	}
@@ -209,70 +209,70 @@ func parserErrorMessage(state, lookAhead int) string {
 		} else {
 			res += " or "
 		}
-		res += parserTokname(tok)
+		res += yyTokname(tok)
 	}
 	return res
 }
 
-func parserlex1(lex parserLexer, lval *parserSymType) (char, token int) {
+func yylex1(lex yyLexer, lval *yySymType) (char, token int) {
 	token = 0
 	char = lex.Lex(lval)
 	if char <= 0 {
-		token = parserTok1[0]
+		token = yyTok1[0]
 		goto out
 	}
-	if char < len(parserTok1) {
-		token = parserTok1[char]
+	if char < len(yyTok1) {
+		token = yyTok1[char]
 		goto out
 	}
-	if char >= parserPrivate {
-		if char < parserPrivate+len(parserTok2) {
-			token = parserTok2[char-parserPrivate]
+	if char >= yyPrivate {
+		if char < yyPrivate+len(yyTok2) {
+			token = yyTok2[char-yyPrivate]
 			goto out
 		}
 	}
-	for i := 0; i < len(parserTok3); i += 2 {
-		token = parserTok3[i+0]
+	for i := 0; i < len(yyTok3); i += 2 {
+		token = yyTok3[i+0]
 		if token == char {
-			token = parserTok3[i+1]
+			token = yyTok3[i+1]
 			goto out
 		}
 	}
 
 out:
 	if token == 0 {
-		token = parserTok2[1] /* unknown char */
+		token = yyTok2[1] /* unknown char */
 	}
-	if parserDebug >= 3 {
-		__yyfmt__.Printf("lex %s(%d)\n", parserTokname(token), uint(char))
+	if yyDebug >= 3 {
+		__yyfmt__.Printf("lex %s(%d)\n", yyTokname(token), uint(char))
 	}
 	return char, token
 }
 
-func parserParse(parserlex parserLexer) int {
-	return parserNewParser().Parse(parserlex)
+func yyParse(yylex yyLexer) int {
+	return yyNewParser().Parse(yylex)
 }
 
-func (parserrcvr *parserParserImpl) Parse(parserlex parserLexer) int {
-	var parsern int
-	var parserVAL parserSymType
-	var parserDollar []parserSymType
-	_ = parserDollar // silence set and not used
-	parserS := parserrcvr.stack[:]
+func (yyrcvr *yyParserImpl) Parse(yylex yyLexer) int {
+	var yyn int
+	var yyVAL yySymType
+	var yyDollar []yySymType
+	_ = yyDollar // silence set and not used
+	yyS := yyrcvr.stack[:]
 
 	Nerrs := 0   /* number of errors */
 	Errflag := 0 /* error recovery flag */
-	parserstate := 0
-	parserrcvr.char = -1
-	parsertoken := -1 // parserrcvr.char translated into internal numbering
+	yystate := 0
+	yyrcvr.char = -1
+	yytoken := -1 // yyrcvr.char translated into internal numbering
 	defer func() {
 		// Make sure we report no lookahead when not parsing.
-		parserstate = -1
-		parserrcvr.char = -1
-		parsertoken = -1
+		yystate = -1
+		yyrcvr.char = -1
+		yytoken = -1
 	}()
-	parserp := -1
-	goto parserstack
+	yyp := -1
+	goto yystack
 
 ret0:
 	return 0
@@ -280,81 +280,81 @@ ret0:
 ret1:
 	return 1
 
-parserstack:
+yystack:
 	/* put a state and value onto the stack */
-	if parserDebug >= 4 {
-		__yyfmt__.Printf("char %v in %v\n", parserTokname(parsertoken), parserStatname(parserstate))
+	if yyDebug >= 4 {
+		__yyfmt__.Printf("char %v in %v\n", yyTokname(yytoken), yyStatname(yystate))
 	}
 
-	parserp++
-	if parserp >= len(parserS) {
-		nyys := make([]parserSymType, len(parserS)*2)
-		copy(nyys, parserS)
-		parserS = nyys
+	yyp++
+	if yyp >= len(yyS) {
+		nyys := make([]yySymType, len(yyS)*2)
+		copy(nyys, yyS)
+		yyS = nyys
 	}
-	parserS[parserp] = parserVAL
-	parserS[parserp].yys = parserstate
+	yyS[yyp] = yyVAL
+	yyS[yyp].yys = yystate
 
-parsernewstate:
-	parsern = parserPact[parserstate]
-	if parsern <= parserFlag {
-		goto parserdefault /* simple state */
+yynewstate:
+	yyn = yyPact[yystate]
+	if yyn <= yyFlag {
+		goto yydefault /* simple state */
 	}
-	if parserrcvr.char < 0 {
-		parserrcvr.char, parsertoken = parserlex1(parserlex, &parserrcvr.lval)
+	if yyrcvr.char < 0 {
+		yyrcvr.char, yytoken = yylex1(yylex, &yyrcvr.lval)
 	}
-	parsern += parsertoken
-	if parsern < 0 || parsern >= parserLast {
-		goto parserdefault
+	yyn += yytoken
+	if yyn < 0 || yyn >= yyLast {
+		goto yydefault
 	}
-	parsern = parserAct[parsern]
-	if parserChk[parsern] == parsertoken { /* valid shift */
-		parserrcvr.char = -1
-		parsertoken = -1
-		parserVAL = parserrcvr.lval
-		parserstate = parsern
+	yyn = yyAct[yyn]
+	if yyChk[yyn] == yytoken { /* valid shift */
+		yyrcvr.char = -1
+		yytoken = -1
+		yyVAL = yyrcvr.lval
+		yystate = yyn
 		if Errflag > 0 {
 			Errflag--
 		}
-		goto parserstack
+		goto yystack
 	}
 
-parserdefault:
+yydefault:
 	/* default state action */
-	parsern = parserDef[parserstate]
-	if parsern == -2 {
-		if parserrcvr.char < 0 {
-			parserrcvr.char, parsertoken = parserlex1(parserlex, &parserrcvr.lval)
+	yyn = yyDef[yystate]
+	if yyn == -2 {
+		if yyrcvr.char < 0 {
+			yyrcvr.char, yytoken = yylex1(yylex, &yyrcvr.lval)
 		}
 
 		/* look through exception table */
 		xi := 0
 		for {
-			if parserExca[xi+0] == -1 && parserExca[xi+1] == parserstate {
+			if yyExca[xi+0] == -1 && yyExca[xi+1] == yystate {
 				break
 			}
 			xi += 2
 		}
 		for xi += 2; ; xi += 2 {
-			parsern = parserExca[xi+0]
-			if parsern < 0 || parsern == parsertoken {
+			yyn = yyExca[xi+0]
+			if yyn < 0 || yyn == yytoken {
 				break
 			}
 		}
-		parsern = parserExca[xi+1]
-		if parsern < 0 {
+		yyn = yyExca[xi+1]
+		if yyn < 0 {
 			goto ret0
 		}
 	}
-	if parsern == 0 {
+	if yyn == 0 {
 		/* error ... attempt to resume parsing */
 		switch Errflag {
 		case 0: /* brand new error */
-			parserlex.Error(parserErrorMessage(parserstate, parsertoken))
+			yylex.Error(yyErrorMessage(yystate, yytoken))
 			Nerrs++
-			if parserDebug >= 1 {
-				__yyfmt__.Printf("%s", parserStatname(parserstate))
-				__yyfmt__.Printf(" saw %s\n", parserTokname(parsertoken))
+			if yyDebug >= 1 {
+				__yyfmt__.Printf("%s", yyStatname(yystate))
+				__yyfmt__.Printf(" saw %s\n", yyTokname(yytoken))
 			}
 			fallthrough
 
@@ -362,109 +362,109 @@ parserdefault:
 			Errflag = 3
 
 			/* find a state where "error" is a legal shift action */
-			for parserp >= 0 {
-				parsern = parserPact[parserS[parserp].yys] + parserErrCode
-				if parsern >= 0 && parsern < parserLast {
-					parserstate = parserAct[parsern] /* simulate a shift of "error" */
-					if parserChk[parserstate] == parserErrCode {
-						goto parserstack
+			for yyp >= 0 {
+				yyn = yyPact[yyS[yyp].yys] + yyErrCode
+				if yyn >= 0 && yyn < yyLast {
+					yystate = yyAct[yyn] /* simulate a shift of "error" */
+					if yyChk[yystate] == yyErrCode {
+						goto yystack
 					}
 				}
 
 				/* the current p has no shift on "error", pop stack */
-				if parserDebug >= 2 {
-					__yyfmt__.Printf("error recovery pops state %d\n", parserS[parserp].yys)
+				if yyDebug >= 2 {
+					__yyfmt__.Printf("error recovery pops state %d\n", yyS[yyp].yys)
 				}
-				parserp--
+				yyp--
 			}
 			/* there is no state on the stack with an error shift ... abort */
 			goto ret1
 
 		case 3: /* no shift yet; clobber input char */
-			if parserDebug >= 2 {
-				__yyfmt__.Printf("error recovery discards %s\n", parserTokname(parsertoken))
+			if yyDebug >= 2 {
+				__yyfmt__.Printf("error recovery discards %s\n", yyTokname(yytoken))
 			}
-			if parsertoken == parserEofCode {
+			if yytoken == yyEofCode {
 				goto ret1
 			}
-			parserrcvr.char = -1
-			parsertoken = -1
-			goto parsernewstate /* try again in the same state */
+			yyrcvr.char = -1
+			yytoken = -1
+			goto yynewstate /* try again in the same state */
 		}
 	}
 
-	/* reduction by production parsern */
-	if parserDebug >= 2 {
-		__yyfmt__.Printf("reduce %v in:\n\t%v\n", parsern, parserStatname(parserstate))
+	/* reduction by production yyn */
+	if yyDebug >= 2 {
+		__yyfmt__.Printf("reduce %v in:\n\t%v\n", yyn, yyStatname(yystate))
 	}
 
-	parsernt := parsern
-	parserpt := parserp
-	_ = parserpt // guard against "declared and not used"
+	yynt := yyn
+	yypt := yyp
+	_ = yypt // guard against "declared and not used"
 
-	parserp -= parserR2[parsern]
-	// parserp is now the index of $0. Perform the default action. Iff the
+	yyp -= yyR2[yyn]
+	// yyp is now the index of $0. Perform the default action. Iff the
 	// reduced production is ε, $1 is possibly out of range.
-	if parserp+1 >= len(parserS) {
-		nyys := make([]parserSymType, len(parserS)*2)
-		copy(nyys, parserS)
-		parserS = nyys
+	if yyp+1 >= len(yyS) {
+		nyys := make([]yySymType, len(yyS)*2)
+		copy(nyys, yyS)
+		yyS = nyys
 	}
-	parserVAL = parserS[parserp+1]
+	yyVAL = yyS[yyp+1]
 
 	/* consult goto table to find next state */
-	parsern = parserR1[parsern]
-	parserg := parserPgo[parsern]
-	parserj := parserg + parserS[parserp].yys + 1
+	yyn = yyR1[yyn]
+	yyg := yyPgo[yyn]
+	yyj := yyg + yyS[yyp].yys + 1
 
-	if parserj >= parserLast {
-		parserstate = parserAct[parserg]
+	if yyj >= yyLast {
+		yystate = yyAct[yyg]
 	} else {
-		parserstate = parserAct[parserj]
-		if parserChk[parserstate] != -parsern {
-			parserstate = parserAct[parserg]
+		yystate = yyAct[yyj]
+		if yyChk[yystate] != -yyn {
+			yystate = yyAct[yyg]
 		}
 	}
 	// dummy call; replaced with literal code
-	switch parsernt {
+	switch yynt {
 
 	case 1:
-		parserDollar = parserS[parserpt-1 : parserpt+1]
+		yyDollar = yyS[yypt-1 : yypt+1]
 		//line parser.go.y:24
 		{
-			parserVAL.expr = parserDollar[1].expr
-			if l, ok := parserlex.(*Lexer); ok {
-				l.expr = parserVAL.expr
+			yyVAL.expr = yyDollar[1].expr
+			if l, ok := yylex.(*Lexer); ok {
+				l.expr = yyVAL.expr
 			}
 		}
 	case 2:
-		parserDollar = parserS[parserpt-1 : parserpt+1]
+		yyDollar = yyS[yypt-1 : yypt+1]
 		//line parser.go.y:33
 		{
-			parserVAL.expr = &ast.Ident{Name: parserDollar[1].tok.Lit}
-			parserVAL.expr.SetPosition(parserDollar[1].tok.Position())
+			yyVAL.expr = &ast.Ident{Name: yyDollar[1].tok.Lit}
+			yyVAL.expr.SetPosition(yyDollar[1].tok.Position())
 		}
 	case 3:
-		parserDollar = parserS[parserpt-1 : parserpt+1]
+		yyDollar = yyS[yypt-1 : yypt+1]
 		//line parser.go.y:38
 		{
-			parserVAL.expr = &ast.BasicLit{Kind: token.INT, Lit: parserDollar[1].tok.Lit}
-			parserVAL.expr.SetPosition(parserDollar[1].tok.Position())
+			yyVAL.expr = &ast.BasicLit{Kind: token.INT, Lit: yyDollar[1].tok.Lit}
+			yyVAL.expr.SetPosition(yyDollar[1].tok.Position())
 		}
 	case 4:
-		parserDollar = parserS[parserpt-1 : parserpt+1]
+		yyDollar = yyS[yypt-1 : yypt+1]
 		//line parser.go.y:43
 		{
-			parserVAL.expr = &ast.BasicLit{Kind: token.BOOL, Lit: parserDollar[1].tok.Lit}
-			parserVAL.expr.SetPosition(parserDollar[1].tok.Position())
+			yyVAL.expr = &ast.BasicLit{Kind: token.BOOL, Lit: yyDollar[1].tok.Lit}
+			yyVAL.expr.SetPosition(yyDollar[1].tok.Position())
 		}
 	case 5:
-		parserDollar = parserS[parserpt-1 : parserpt+1]
+		yyDollar = yyS[yypt-1 : yypt+1]
 		//line parser.go.y:48
 		{
-			parserVAL.expr = &ast.BasicLit{Kind: token.BOOL, Lit: parserDollar[1].tok.Lit}
-			parserVAL.expr.SetPosition(parserDollar[1].tok.Position())
+			yyVAL.expr = &ast.BasicLit{Kind: token.BOOL, Lit: yyDollar[1].tok.Lit}
+			yyVAL.expr.SetPosition(yyDollar[1].tok.Position())
 		}
 	}
-	goto parserstack /* stack new state and value */
+	goto yystack /* stack new state and value */
 }

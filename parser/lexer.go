@@ -10,7 +10,7 @@ import (
 	"github.com/agatan/gray/token"
 )
 
-//go:generate go tool yacc -o parser.go -p parser parser.go.y
+//go:generate go tool yacc -o parser.go parser.go.y
 
 var debugMode = os.Getenv("GRAY_DEBUG") != ""
 
@@ -22,7 +22,7 @@ func debugf(f string, args ...interface{}) {
 
 func init() {
 	if debugMode {
-		parserErrorVerbose = true
+		yyErrorVerbose = true
 	}
 }
 
@@ -89,7 +89,7 @@ func (l *Lexer) scan() (tok int, lit string, pos token.Position, err error) {
 	return
 }
 
-func (l *Lexer) Lex(lval *parserSymType) int {
+func (l *Lexer) Lex(lval *yySymType) int {
 	tok, lit, pos, err := l.scan()
 	if err != nil {
 		l.err = &Error{Message: err.Error(), Pos: pos, Fatal: true}
@@ -105,7 +105,7 @@ func (l *Lexer) Error(msg string) {
 }
 
 func Parse(l *Lexer) (ast.Expr, error) {
-	if parserParse(l) != 0 {
+	if yyParse(l) != 0 {
 		return nil, l.err
 	}
 	return l.expr, l.err
