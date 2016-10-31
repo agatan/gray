@@ -48,7 +48,7 @@ func (e *Error) Error() string {
 // Lexer represents lexing states.
 type Lexer struct {
 	scanner *scanner.Scanner
-	expr    ast.Expr
+	stmts   []ast.Stmt
 	pos     token.Position
 	err     error
 }
@@ -117,9 +117,9 @@ func (l *Lexer) Error(msg string) {
 	l.err = &Error{Message: msg, Pos: l.pos, Fatal: false}
 }
 
-func Parse(l *Lexer) (ast.Expr, error) {
+func Parse(l *Lexer) ([]ast.Stmt, error) {
 	if yyParse(l) != 0 {
 		return nil, l.err
 	}
-	return l.expr, l.err
+	return l.stmts, l.err
 }
