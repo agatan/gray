@@ -212,23 +212,23 @@ params:
 	{
 		$$ = nil
 	}
+	| param ','
+	{
+		$$ = []*ast.Param{$1}
+	}
 	| param
 	{
 		$$ = []*ast.Param{$1}
 	}
-	| param opt_terms ','
+	| params ',' opt_terms param
 	{
-		$$ = []*ast.Param{$1}
-	}
-	| params opt_terms ',' opt_terms param
-	{
-		$$ = append($1, $5)
+		$$ = append($1, $4)
 	}
 
 param:
-	ident opt_terms ':' opt_terms typ
+	ident ':' typ
 	{
-		$$ = &ast.Param{Ident: $1, Type: $5}
+		$$ = &ast.Param{Ident: $1, Type: $3}
 	}
 
 opt_terms:
