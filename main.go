@@ -9,10 +9,10 @@ import (
 
 func main() {
 	l := parser.NewLexer("<stdin>", os.Stdin)
-	ss, err := parser.Parse(l)
+	ds, err := parser.Parse(l)
 	if err != nil {
 		fmt.Println(err)
 	} else {
-		fmt.Printf("%#v\n", ss)
+		fmt.Printf("%#v\n", ds)
 	}
 }
