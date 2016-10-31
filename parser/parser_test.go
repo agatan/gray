@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 )
@@ -16,7 +17,7 @@ func TestPrimitiveExpr(t *testing.T) {
 		{" ( 123 ) "},
 	}
 	for _, test := range tests {
-		l := NewLexer("test.gy", strings.NewReader(test.src))
+		l := NewLexer("test.gy", strings.NewReader(fmt.Sprintf("def test() { %s }", test.src)))
 		expr, err := Parse(l)
 		if err != nil {
 			t.Error(err)
@@ -30,7 +31,7 @@ func TestPrimitiveExpr(t *testing.T) {
 func TestLetStmt(t *testing.T) {
 	tests := []string{` let x = 1 `, ` let x : Int = 1 `}
 	for _, test := range tests {
-		l := NewLexer("test.gy", strings.NewReader(test))
+		l := NewLexer("test.gy", strings.NewReader(fmt.Sprintf("def test() { %s }", test)))
 		ss, err := Parse(l)
 		if err != nil {
 			t.Error(err)

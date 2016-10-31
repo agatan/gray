@@ -7,36 +7,93 @@ import (
 )
 %}
 
+%type<decls> compdecls
+%type<decls> decls
+%type<decl> decl
+%type<decl> func_decl
+
 %type<stmts> compstmts
 %type<stmts> stmts
 %type<stmt> stmt
 %type<stmt> let_stmt
 
 %type<expr> expr
+%type<block_expr> block_expr
 %type<expr> primitive_expr
 
 %type<typ> typ
 
 %type<ident> ident
+%type<params> params
+%type<param> param
 
 %union{
-	stmt      ast.Stmt
-	stmts     []ast.Stmt
-	expr      ast.Expr
-	typ       ast.Type
+	decl       ast.Decl
+	decls      []ast.Decl
+	stmt       ast.Stmt
+	stmts      []ast.Stmt
+	expr       ast.Expr
+	block_expr *ast.BlockExpr
+	typ        ast.Type
 
-	ident     *ast.Ident
-	tok       token.Token
+	ident      *ast.Ident
+	tok        token.Token
 
-	term      token.Token
-	terms     token.Token
-	opt_terms token.Token
+	params     []*ast.Param
+	param      *ast.Param
+
+	term       token.Token
+	terms      token.Token
+	opt_terms  token.Token
 }
 
 %token<tok> IDENT UIDENT INT TRUE FALSE
-%token<tok> LET
+%token<tok> DEF LET
 
 %%
+
+compdecls:
+	opt_terms
+	{
+		$$ = nil
+	}
+	| decls opt_terms
+	{
+		$$ = $1
+	}
+
+decls:
+	opt_terms decl
+	{
+		$$ = []ast.Decl{$2}
+		if l, ok := yylex.(*Lexer); ok {
+			l.decls = $$
+		}
+	}
+	| decls terms decl
+	{
+		$$ = append($1, $3)
+		if l, ok := yylex.(*Lexer); ok {
+			l.decls = $$
+		}
+	}
+
+decl:
+	func_decl
+	{
+		$$ = $1
+	}
+
+func_decl:
+	DEF opt_terms ident opt_terms '(' opt_terms params opt_terms ')' opt_terms block_expr
+	{
+		$$ = &ast.FuncDecl{
+			Ident: $3,
+			Type: &ast.FuncType{Params: $7, Result: nil},
+			Body: $11,
+		}
+		$$.SetPosition($1.Position())
+	}
 
 compstmts:
 	opt_terms
@@ -52,16 +109,10 @@ stmts:
 	opt_terms stmt
 	{
 		$$ = []ast.Stmt{$2}
-		if l, ok := yylex.(*Lexer); ok {
-			l.stmts = $$
-		}
 	}
 	| stmts terms stmt
 	{
 		$$ = append($1, $3)
-		if l, ok := yylex.(*Lexer); ok {
-			l.stmts = $$
-		}
 	}
 
 stmt:
@@ -99,6 +150,19 @@ expr:
 	primitive_expr
 	{
 		$$ = $1
+	}
+	| block_expr
+	{
+		$$ = $1
+	}
+
+block_expr:
+	'{' compstmts '}'
+	{
+		$$ = &ast.BlockExpr{Stmts: $2}
+		if l, ok := yylex.(*Lexer); ok {
+			$$.SetPosition(l.pos)
+		}
 	}
 
 primitive_expr:
@@ -141,6 +205,30 @@ ident:
 	{
 		$$ = &ast.Ident{Name: $1.Lit}
 		$$.SetPosition($1.Position())
+	}
+
+params:
+	/* empty */
+	{
+		$$ = nil
+	}
+	| param
+	{
+		$$ = []*ast.Param{$1}
+	}
+	| param opt_terms ','
+	{
+		$$ = []*ast.Param{$1}
+	}
+	| params opt_terms ',' opt_terms param
+	{
+		$$ = append($1, $5)
+	}
+
+param:
+	ident opt_terms ':' opt_terms typ
+	{
+		$$ = &ast.Param{Ident: $1, Type: $5}
 	}
 
 opt_terms:
