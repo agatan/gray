@@ -44,7 +44,10 @@ func TestLetStmt(t *testing.T) {
 
 func TestDefDecl(t *testing.T) {
 	test := `
-	def test(x: Int, y: Bool) -> Bool {
+	def test(
+		x: Int,
+		y: Bool
+	) -> Bool {
 		y
 	}
 	`
