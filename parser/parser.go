@@ -20,6 +20,8 @@ const IDENT = 57346
 const INT = 57347
 const TRUE = 57348
 const FALSE = 57349
+const LPAREN = 57350
+const RPAREN = 57351
 
 var yyToknames = [...]string{
 	"$end",
@@ -29,6 +31,8 @@ var yyToknames = [...]string{
 	"INT",
 	"TRUE",
 	"FALSE",
+	"LPAREN",
+	"RPAREN",
 }
 var yyStatenames = [...]string{}
 
@@ -43,41 +47,42 @@ var yyExca = [...]int{
 	-2, 0,
 }
 
-const yyNprod = 6
+const yyNprod = 7
 const yyPrivate = 57344
 
 var yyTokenNames []string
 var yyStates []string
 
-const yyLast = 6
+const yyLast = 14
 
 var yyAct = [...]int{
 
-	3, 4, 5, 6, 1, 2,
+	3, 4, 5, 6, 7, 1, 9, 2, 0, 0,
+	0, 0, 0, 8,
 }
 var yyPact = [...]int{
 
-	-4, -1000, -1000, -1000, -1000, -1000, -1000,
+	-4, -1000, -1000, -1000, -1000, -1000, -1000, -4, -3, -1000,
 }
 var yyPgo = [...]int{
 
-	0, 5, 4,
+	0, 7, 5,
 }
 var yyR1 = [...]int{
 
-	0, 2, 1, 1, 1, 1,
+	0, 2, 1, 1, 1, 1, 1,
 }
 var yyR2 = [...]int{
 
-	0, 1, 1, 1, 1, 1,
+	0, 1, 1, 1, 1, 1, 3,
 }
 var yyChk = [...]int{
 
-	-1000, -2, -1, 4, 5, 6, 7,
+	-1000, -2, -1, 4, 5, 6, 7, 8, -2, 9,
 }
 var yyDef = [...]int{
 
-	0, -2, 1, 2, 3, 4, 5,
+	0, -2, 1, 2, 3, 4, 5, 0, 0, 6,
 }
 var yyTok1 = [...]int{
 
@@ -85,7 +90,7 @@ var yyTok1 = [...]int{
 }
 var yyTok2 = [...]int{
 
-	2, 3, 4, 5, 6, 7,
+	2, 3, 4, 5, 6, 7, 8, 9,
 }
 var yyTok3 = [...]int{
 	0,
@@ -430,7 +435,7 @@ yydefault:
 
 	case 1:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.go.y:24
+		//line parser.go.y:25
 		{
 			yyVAL.expr = yyDollar[1].expr
 			if l, ok := yylex.(*Lexer); ok {
@@ -439,30 +444,37 @@ yydefault:
 		}
 	case 2:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.go.y:33
+		//line parser.go.y:34
 		{
 			yyVAL.expr = &ast.Ident{Name: yyDollar[1].tok.Lit}
 			yyVAL.expr.SetPosition(yyDollar[1].tok.Position())
 		}
 	case 3:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.go.y:38
+		//line parser.go.y:39
 		{
 			yyVAL.expr = &ast.BasicLit{Kind: token.INT, Lit: yyDollar[1].tok.Lit}
 			yyVAL.expr.SetPosition(yyDollar[1].tok.Position())
 		}
 	case 4:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.go.y:43
+		//line parser.go.y:44
 		{
 			yyVAL.expr = &ast.BasicLit{Kind: token.BOOL, Lit: yyDollar[1].tok.Lit}
 			yyVAL.expr.SetPosition(yyDollar[1].tok.Position())
 		}
 	case 5:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.go.y:48
+		//line parser.go.y:49
 		{
 			yyVAL.expr = &ast.BasicLit{Kind: token.BOOL, Lit: yyDollar[1].tok.Lit}
+			yyVAL.expr.SetPosition(yyDollar[1].tok.Position())
+		}
+	case 6:
+		yyDollar = yyS[yypt-3 : yypt+1]
+		//line parser.go.y:54
+		{
+			yyVAL.expr = &ast.ParenExpr{X: yyDollar[2].expr}
 			yyVAL.expr.SetPosition(yyDollar[1].tok.Position())
 		}
 	}

@@ -29,6 +29,12 @@ type (
 		Lit  string
 	}
 
+	// ParenExpr represent parensed expressions .
+	ParenExpr struct {
+		ExprImpl
+		X Expr
+	}
+
 	// BlockExpr represent block expression.
 	BlockExpr struct {
 		ExprImpl

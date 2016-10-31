@@ -16,6 +16,7 @@ import (
 }
 
 %token<tok> IDENT INT TRUE FALSE
+%token<tok> LPAREN RPAREN
 
 %%
 
@@ -47,5 +48,10 @@ primitive_expr:
 	| FALSE
 	{
 		$$ = &ast.BasicLit{Kind: token.BOOL, Lit: $1.Lit}
+		$$.SetPosition($1.Position())
+	}
+	| LPAREN expr RPAREN
+	{
+		$$ = &ast.ParenExpr{X: $2}
 		$$.SetPosition($1.Position())
 	}

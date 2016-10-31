@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -85,6 +86,18 @@ func (l *Lexer) scan() (tok int, lit string, pos token.Position, err error) {
 			return tok, lit, pos, err
 		}
 		tok = IDENT
+	default:
+		switch lit {
+		case "(":
+			tok = LPAREN
+			return
+		case ")":
+			tok = RPAREN
+			return
+		default:
+			err = fmt.Errorf("Unknown token: %v", lit)
+			return
+		}
 	}
 	return
 }
