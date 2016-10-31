@@ -28,12 +28,15 @@ func TestPrimitiveExpr(t *testing.T) {
 }
 
 func TestLetStmt(t *testing.T) {
-	l := NewLexer("test.gy", strings.NewReader(` let x = 1 `))
-	ss, err := Parse(l)
-	if err != nil {
-		t.Error(err)
-	}
-	if len(ss) != 1 {
-		t.Error("let statement is not work")
+	tests := []string{` let x = 1 `, ` let x : Int = 1 `}
+	for _, test := range tests {
+		l := NewLexer("test.gy", strings.NewReader(test))
+		ss, err := Parse(l)
+		if err != nil {
+			t.Error(err)
+		}
+		if len(ss) != 1 {
+			t.Error("let statement is not work")
+		}
 	}
 }

@@ -15,12 +15,15 @@ import (
 %type<expr> expr
 %type<expr> primitive_expr
 
+%type<typ> typ
+
 %type<ident> ident
 
 %union{
 	stmt      ast.Stmt
 	stmts     []ast.Stmt
 	expr      ast.Expr
+	typ       ast.Type
 
 	ident     *ast.Ident
 	tok       token.Token
@@ -30,7 +33,7 @@ import (
 	opt_terms token.Token
 }
 
-%token<tok> IDENT INT TRUE FALSE
+%token<tok> IDENT UIDENT INT TRUE FALSE
 %token<tok> LET
 
 %%
@@ -82,6 +85,15 @@ let_stmt:
 		}
 		$$.SetPosition($1.Position())
 	}
+	| LET opt_terms ident opt_terms ':' typ '=' opt_terms expr
+	{
+		$$ = &ast.LetStmt {
+			Ident: $3,
+			Type: $6,
+			Value: $9,
+		}
+		$$.SetPosition($1.Position())
+	}
 
 expr:
 	primitive_expr
@@ -115,6 +127,13 @@ primitive_expr:
 		if l, ok := yylex.(*Lexer); ok {
 			$$.SetPosition(l.pos)
 		}
+	}
+
+typ:
+	UIDENT
+	{
+		$$ = &ast.TypeIdent{Name: $1.Lit}
+		$$.SetPosition($1.Position())
 	}
 
 ident:

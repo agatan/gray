@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"text/scanner"
+	"unicode/utf8"
 
 	"github.com/agatan/gray/ast"
 	"github.com/agatan/gray/token"
@@ -86,7 +87,12 @@ func (l *Lexer) scan() (tok int, lit string, pos token.Position, err error) {
 		if tok, ok := keywords[lit]; ok {
 			return tok, lit, pos, err
 		}
-		tok = IDENT
+		ch, _ := utf8.DecodeRune([]byte(lit))
+		if 'A' <= ch && ch <= 'Z' {
+			tok = UIDENT
+		} else {
+			tok = IDENT
+		}
 	default:
 		tok = int(t)
 		return

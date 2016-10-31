@@ -26,7 +26,7 @@ type (
 	LetStmt struct {
 		StmtImpl
 		Ident *Ident
-		Type  Expr // if nil, should be infered.
+		Type  Type // if nil, should be infered.
 		Value Expr
 	}
 )
