@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -42,7 +43,7 @@ type Error struct {
 
 // Error returns the error message.
 func (e *Error) Error() string {
-	return e.Message
+	return fmt.Sprintf("%s:%d:%d: %s", e.Filename, e.Pos.Line, e.Pos.Column, e.Message)
 }
 
 // Lexer represents lexing states.
@@ -95,6 +96,15 @@ func (l *Lexer) scan() (tok int, lit string, pos token.Position, err error) {
 			tok = IDENT
 		}
 	default:
+		switch t {
+		case '-':
+			if l.scanner.Peek() == '>' {
+				l.scanner.Next()
+				tok = ARROW
+				lit = "->"
+				return
+			}
+		}
 		tok = int(t)
 		return
 	}

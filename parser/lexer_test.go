@@ -16,6 +16,7 @@ func TestLex(t *testing.T) {
 		{" ident ", IDENT, "ident"},
 		{" true ", TRUE, "true"},
 		{" false ", FALSE, "false"},
+		{" -> ", ARROW, "->"},
 	}
 	for _, test := range tests {
 		l := NewLexer("test.gy", strings.NewReader(test.src))

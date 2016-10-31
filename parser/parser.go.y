@@ -49,6 +49,7 @@ import (
 
 %token<tok> IDENT UIDENT INT TRUE FALSE
 %token<tok> DEF LET
+%token<tok> ARROW
 
 %%
 
@@ -91,6 +92,15 @@ func_decl:
 			Ident: $3,
 			Type: &ast.FuncType{Params: $7, Result: nil},
 			Body: $11,
+		}
+		$$.SetPosition($1.Position())
+	}
+	| DEF opt_terms ident opt_terms '(' opt_terms params opt_terms ')' opt_terms ARROW opt_terms typ opt_terms block_expr
+	{
+		$$ = &ast.FuncDecl{
+			Ident: $3,
+			Type: &ast.FuncType{Params: $7, Result: $13},
+			Body: $15,
 		}
 		$$.SetPosition($1.Position())
 	}
@@ -211,10 +221,6 @@ params:
 	/* empty */
 	{
 		$$ = nil
-	}
-	| param ','
-	{
-		$$ = []*ast.Param{$1}
 	}
 	| param
 	{

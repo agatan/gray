@@ -37,7 +37,23 @@ func TestLetStmt(t *testing.T) {
 			t.Error(err)
 		}
 		if len(ss) != 1 {
-			t.Error("let statement is not work")
+			t.Error("let statement does not work")
 		}
+	}
+}
+
+func TestDefDecl(t *testing.T) {
+	test := `
+	def test(x: Int, y: Bool) -> Bool {
+		y
+	}
+	`
+	l := NewLexer("test.gy", strings.NewReader(test))
+	ds, err := Parse(l)
+	if err != nil {
+		t.Error(err)
+	}
+	if len(ds) != 1 {
+		t.Error("def declaration does not work")
 	}
 }
