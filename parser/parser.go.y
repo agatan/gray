@@ -26,7 +26,6 @@ import (
 }
 
 %token<tok> IDENT INT TRUE FALSE
-%token<tok> LPAREN RPAREN EQ
 %token<tok> LET
 
 %%
@@ -58,7 +57,7 @@ stmt:
 	}
 
 let_stmt:
-	LET ident EQ expr
+	LET ident '=' expr
 	{
 		$$ = &ast.LetStmt {
 			Ident: $2,
@@ -94,10 +93,12 @@ primitive_expr:
 		$$ = &ast.BasicLit{Kind: token.BOOL, Lit: $1.Lit}
 		$$.SetPosition($1.Position())
 	}
-	| LPAREN expr RPAREN
+	| '(' expr ')'
 	{
 		$$ = &ast.ParenExpr{X: $2}
-		$$.SetPosition($1.Position())
+		if l, ok := yylex.(*Lexer); ok {
+			$$.SetPosition(l.pos)
+		}
 	}
 
 ident:

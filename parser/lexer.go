@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -63,6 +62,7 @@ func NewLexer(filename string, r io.Reader) *Lexer {
 var keywords map[string]int = map[string]int{
 	"true":  TRUE,
 	"false": FALSE,
+	"let":   LET,
 }
 
 func (l *Lexer) scan() (tok int, lit string, pos token.Position, err error) {
@@ -87,17 +87,8 @@ func (l *Lexer) scan() (tok int, lit string, pos token.Position, err error) {
 		}
 		tok = IDENT
 	default:
-		switch lit {
-		case "(":
-			tok = LPAREN
-			return
-		case ")":
-			tok = RPAREN
-			return
-		default:
-			err = fmt.Errorf("Unknown token: %v", lit)
-			return
-		}
+		tok = int(t)
+		return
 	}
 	return
 }
