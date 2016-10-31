@@ -2,30 +2,17 @@ package main
 
 import (
 	"fmt"
+	"os"
 
-	"github.com/agatan/gray/ast"
-	"github.com/agatan/gray/token"
+	"github.com/agatan/gray/parser"
 )
 
 func main() {
-	ds := []ast.Decl{
-		&ast.FuncDecl{
-			Ident: &ast.Ident{Name: "main"},
-			Type: &ast.FuncType{
-				Params: []*ast.Param{},
-				Result: &ast.TypeIdent{Name: "Unit"},
-			},
-			Body: &ast.BlockExpr{
-				Stmts: []ast.Stmt{
-					&ast.ExprStmt{
-						X: &ast.BasicLit{
-							Kind: token.UNIT,
-							Lit:  "()",
-						},
-					},
-				},
-			},
-		},
+	l := parser.NewLexer("<stdin>", os.Stdin)
+	ss, err := parser.Parse(l)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Printf("%#v\n", ss)
 	}
-	fmt.Println(ds)
 }
