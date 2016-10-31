@@ -46,7 +46,7 @@ func TestDefDecl(t *testing.T) {
 	test := `
 	def test(
 		x: Int,
-		y: Bool
+		y: Bool,
 	) -> Bool {
 		y
 	}

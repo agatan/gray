@@ -25,6 +25,7 @@ import (
 
 %type<ident> ident
 %type<params> params
+%type<params> rev_params
 %type<param> param
 
 %union{
@@ -218,6 +219,15 @@ ident:
 	}
 
 params:
+	rev_params
+	{
+		$$ = make([]*ast.Param, len($1))
+		for i, p := range $1 {
+			$$[len($1)-i-1] = p
+		}
+	}
+
+rev_params:
 	/* empty */
 	{
 		$$ = nil
@@ -226,9 +236,9 @@ params:
 	{
 		$$ = []*ast.Param{$1}
 	}
-	| params ',' opt_terms param
+	| param ',' opt_terms rev_params
 	{
-		$$ = append($1, $4)
+		$$ = append($4, $1)
 	}
 
 param:
