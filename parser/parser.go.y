@@ -7,6 +7,7 @@ import (
 )
 %}
 
+%type<stmts> compstmts
 %type<stmts> stmts
 %type<stmt> stmt
 %type<stmt> let_stmt
@@ -17,12 +18,16 @@ import (
 %type<ident> ident
 
 %union{
-	stmt ast.Stmt
-	stmts []ast.Stmt
-	expr ast.Expr
+	stmt      ast.Stmt
+	stmts     []ast.Stmt
+	expr      ast.Expr
 
-	ident *ast.Ident
-	tok token.Token
+	ident     *ast.Ident
+	tok       token.Token
+
+	term      token.Token
+	terms     token.Token
+	opt_terms token.Token
 }
 
 %token<tok> IDENT INT TRUE FALSE
@@ -30,16 +35,27 @@ import (
 
 %%
 
-stmts:
+compstmts:
+	opt_terms
 	{
 		$$ = nil
+	}
+	| stmts opt_terms
+	{
+		$$ = $1
+	}
+
+stmts:
+	opt_terms stmt
+	{
+		$$ = []ast.Stmt{$2}
 		if l, ok := yylex.(*Lexer); ok {
 			l.stmts = $$
 		}
 	}
-	| stmts stmt
+	| stmts terms stmt
 	{
-		$$ = append($1, $2)
+		$$ = append($1, $3)
 		if l, ok := yylex.(*Lexer); ok {
 			l.stmts = $$
 		}
@@ -57,12 +73,12 @@ stmt:
 	}
 
 let_stmt:
-	LET ident '=' expr
+	LET opt_terms ident opt_terms '=' opt_terms expr
 	{
 		$$ = &ast.LetStmt {
-			Ident: $2,
+			Ident: $3,
 			Type: nil,
-			Value: $4,
+			Value: $7,
 		}
 		$$.SetPosition($1.Position())
 	}
@@ -93,9 +109,9 @@ primitive_expr:
 		$$ = &ast.BasicLit{Kind: token.BOOL, Lit: $1.Lit}
 		$$.SetPosition($1.Position())
 	}
-	| '(' expr ')'
+	| '(' opt_terms expr opt_terms ')'
 	{
-		$$ = &ast.ParenExpr{X: $2}
+		$$ = &ast.ParenExpr{X: $3}
 		if l, ok := yylex.(*Lexer); ok {
 			$$.SetPosition(l.pos)
 		}
@@ -107,3 +123,15 @@ ident:
 		$$ = &ast.Ident{Name: $1.Lit}
 		$$.SetPosition($1.Position())
 	}
+
+opt_terms:
+	 /* empty */ | terms
+	 ;
+
+terms:
+	 term | terms term
+	 ;
+
+term:
+	';' | '\n'
+	;

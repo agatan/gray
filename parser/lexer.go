@@ -54,8 +54,9 @@ type Lexer struct {
 
 func NewLexer(filename string, r io.Reader) *Lexer {
 	s := &scanner.Scanner{}
-	s.Filename = filename
 	s.Init(r)
+	s.Whitespace = 1<<'\t' | 1<<' ' | 1<<'\r'
+	s.Filename = filename
 	return &Lexer{scanner: s}
 }
 
