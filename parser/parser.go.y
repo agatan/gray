@@ -24,6 +24,8 @@ import (
 %type<typ> typ
 
 %type<ident> ident
+%type<exprs> exprs
+%type<exprs> rev_exprs
 %type<params> params
 %type<params> rev_params
 %type<param> param
@@ -34,6 +36,7 @@ import (
 	stmt       ast.Stmt
 	stmts      []ast.Stmt
 	expr       ast.Expr
+	exprs      []ast.Expr
 	block_expr *ast.BlockExpr
 	typ        ast.Type
 
@@ -166,6 +169,11 @@ expr:
 	{
 		$$ = $1
 	}
+	| expr '(' opt_terms exprs opt_terms ')'
+	{
+		$$ = &ast.CallExpr{Func: $1, Args: $4}
+		$$.SetPosition($1.Position())
+	}
 
 block_expr:
 	'{' compstmts '}'
@@ -216,6 +224,29 @@ ident:
 	{
 		$$ = &ast.Ident{Name: $1.Lit}
 		$$.SetPosition($1.Position())
+	}
+
+exprs:
+	rev_exprs
+	{
+		$$ = make([]ast.Expr, len($1))
+		for i, p := range $1 {
+			$$[len($1)-i-1] = p
+		}
+	}
+
+rev_exprs:
+	/* empty */
+	{
+		$$ = nil
+	}
+	| expr
+	{
+		$$ = []ast.Expr{$1}
+	}
+	| expr ',' opt_terms rev_exprs
+	{
+		$$ = append($4, $1)
 	}
 
 params:

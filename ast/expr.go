@@ -40,4 +40,11 @@ type (
 		ExprImpl
 		Stmts []Stmt // If empty, the value is Unit.
 	}
+
+	// CallExpr represent calling expression.
+	CallExpr struct {
+		ExprImpl
+		Func Expr
+		Args []Expr
+	}
 )

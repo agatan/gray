@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestPrimitiveExpr(t *testing.T) {
+func TestExpr(t *testing.T) {
 	tests := []struct {
 		src string
 	}{
@@ -15,6 +15,10 @@ func TestPrimitiveExpr(t *testing.T) {
 		{" true "},
 		{" false "},
 		{" ( 123 ) "},
+		{" f() "},
+		{" f(1, 2) "},
+		{" f(1, 2,) "},
+		{" (f)(1, 2,) "},
 	}
 	for _, test := range tests {
 		l := NewLexer("test.gy", strings.NewReader(fmt.Sprintf("def test() { %s }", test.src)))
