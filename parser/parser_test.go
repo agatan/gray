@@ -19,12 +19,14 @@ func TestExpr(t *testing.T) {
 		{" f(1, 2) "},
 		{" f(1, 2,) "},
 		{" (f)(1, 2,) "},
+		{" 1 - 2 "},
+		{" 1 > 3 == false "},
 	}
-	for _, test := range tests {
+	for i, test := range tests {
 		l := NewLexer("test.gy", strings.NewReader(fmt.Sprintf("def test() { %s }", test.src)))
 		expr, err := Parse(l)
 		if err != nil {
-			t.Error(err)
+			t.Errorf("#%d: parsing '%s': %s", i, test, err)
 		}
 		if expr == nil {
 			t.Error("result is nil")

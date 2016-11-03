@@ -55,7 +55,16 @@ import (
 
 %token<tok> IDENT UIDENT INT TRUE FALSE STRING
 %token<tok> DEF LET IF ELSE
+%token<tok> EQEQ NEQ GE LG OROR ANDAND
 %token<tok> ARROW
+
+%left OROR
+%left ANDAND
+%nonassoc EQEQ NEQ
+%left '>' GE '<' LE
+
+%left '+' '-'
+%left '*' '/' '%'
 
 %%
 
@@ -178,6 +187,71 @@ expr:
 	| expr '(' opt_terms exprs opt_terms ')'
 	{
 		$$ = &ast.CallExpr{Func: $1, Args: $4}
+		$$.SetPosition($1.Position())
+	}
+	| expr '+' expr
+	{
+		$$ = &ast.InfixExpr{LHS: $1, Operator: "+", RHS: $3}
+		$$.SetPosition($1.Position())
+	}
+	| expr '-' expr
+	{
+		$$ = &ast.InfixExpr{LHS: $1, Operator: "-", RHS: $3}
+		$$.SetPosition($1.Position())
+	}
+	| expr '*' expr
+	{
+		$$ = &ast.InfixExpr{LHS: $1, Operator: "*", RHS: $3}
+		$$.SetPosition($1.Position())
+	}
+	| expr '/' expr
+	{
+		$$ = &ast.InfixExpr{LHS: $1, Operator: "/", RHS: $3}
+		$$.SetPosition($1.Position())
+	}
+	| expr '%' expr
+	{
+		$$ = &ast.InfixExpr{LHS: $1, Operator: "%", RHS: $3}
+		$$.SetPosition($1.Position())
+	}
+	| expr OROR expr
+	{
+		$$ = &ast.InfixExpr{LHS: $1, Operator: "||", RHS: $3}
+		$$.SetPosition($1.Position())
+	}
+	| expr ANDAND expr
+	{
+		$$ = &ast.InfixExpr{LHS: $1, Operator: "&&", RHS: $3}
+		$$.SetPosition($1.Position())
+	}
+	| expr EQEQ expr
+	{
+		$$ = &ast.InfixExpr{LHS: $1, Operator: "==", RHS: $3}
+		$$.SetPosition($1.Position())
+	}
+	| expr NEQ expr
+	{
+		$$ = &ast.InfixExpr{LHS: $1, Operator: "!=", RHS: $3}
+		$$.SetPosition($1.Position())
+	}
+	| expr '<' expr
+	{
+		$$ = &ast.InfixExpr{LHS: $1, Operator: "<", RHS: $3}
+		$$.SetPosition($1.Position())
+	}
+	| expr '>' expr
+	{
+		$$ = &ast.InfixExpr{LHS: $1, Operator: ">", RHS: $3}
+		$$.SetPosition($1.Position())
+	}
+	| expr GE expr
+	{
+		$$ = &ast.InfixExpr{LHS: $1, Operator: ">=", RHS: $3}
+		$$.SetPosition($1.Position())
+	}
+	| expr LE expr
+	{
+		$$ = &ast.InfixExpr{LHS: $1, Operator: "<=", RHS: $3}
 		$$.SetPosition($1.Position())
 	}
 

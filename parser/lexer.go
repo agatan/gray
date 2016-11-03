@@ -147,6 +147,48 @@ func (l *Lexer) scan() (tok int, lit string, pos token.Position, err error) {
 				lit = "->"
 				return
 			}
+		case '=':
+			if l.scanner.Peek() == '=' {
+				l.scanner.Next()
+				tok = EQEQ
+				lit = "=="
+				return
+			}
+		case '!':
+			if l.scanner.Peek() == '=' {
+				l.scanner.Next()
+				tok = NEQ
+				lit = "!="
+				return
+			}
+		case '>':
+			if l.scanner.Peek() == '=' {
+				l.scanner.Next()
+				tok = GE
+				lit = ">="
+				return
+			}
+		case '<':
+			if l.scanner.Peek() == '=' {
+				l.scanner.Next()
+				tok = LE
+				lit = "<="
+				return
+			}
+		case '&':
+			if l.scanner.Peek() == '&' {
+				l.scanner.Next()
+				tok = ANDAND
+				lit = "&&"
+				return
+			}
+		case '|':
+			if l.scanner.Peek() == '|' {
+				l.scanner.Next()
+				tok = OROR
+				lit = "||"
+				return
+			}
 		}
 		tok = int(t)
 		return

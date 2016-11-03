@@ -18,6 +18,7 @@ func TestLex(t *testing.T) {
 		{" false ", FALSE, "false"},
 		{" -> ", ARROW, "->"},
 		{` "str \n literal \"" `, STRING, "str \n literal \""},
+		{" == ", EQEQ, "=="},
 	}
 	for _, test := range tests {
 		l := NewLexer("test.gy", strings.NewReader(test.src))

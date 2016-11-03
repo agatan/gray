@@ -29,6 +29,14 @@ type (
 		Lit  string
 	}
 
+	// InfixExpr represent binary operation expression.
+	InfixExpr struct {
+		ExprImpl
+		LHS      Expr
+		Operator string
+		RHS      Expr
+	}
+
 	// ParenExpr represent parensed expressions .
 	ParenExpr struct {
 		ExprImpl
