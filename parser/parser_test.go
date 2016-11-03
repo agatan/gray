@@ -119,6 +119,8 @@ func TestType(t *testing.T) {
 	tests := []string{
 		` Int `,
 		` Unit `,
+		` (Int) -> Int `,
+		` (Int, Bool) -> Int `,
 	}
 	for i, test := range tests {
 		l := NewLexer("test.gy", strings.NewReader(fmt.Sprintf(` def test(x: %s) {} `, test)))

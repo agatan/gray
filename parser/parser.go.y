@@ -23,6 +23,8 @@ import (
 %type<expr> primitive_expr
 
 %type<typ> typ
+%type<params> rev_func_type_params
+%type<params> func_type_params
 
 %type<ident> ident
 %type<exprs> exprs
@@ -354,6 +356,34 @@ typ:
 	{
 		$$ = &ast.TypeIdent{Name: $1.Lit}
 		$$.SetPosition($1.Position())
+	}
+	| '(' func_type_params ')' ARROW typ
+	{
+		$$ = &ast.FuncType{Params: $2, Result: $5}
+		$$.SetPosition($4.Position())
+	}
+
+func_type_params:
+	rev_func_type_params
+	{
+		$$ = make([]*ast.Param, len($1))
+		for i, p := range $1 {
+			$$[len($1)-i-1] = p
+		}
+	}
+
+rev_func_type_params:
+	/* empty */
+	{
+		$$ = nil
+	}
+	| typ
+	{
+		$$ = []*ast.Param{&ast.Param{Type: $1}}
+	}
+	| typ ',' rev_func_type_params
+	{
+		$$ = append($3, &ast.Param{Type: $1})
 	}
 
 ident:
