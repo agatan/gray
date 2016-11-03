@@ -21,6 +21,8 @@ func TestExpr(t *testing.T) {
 		{" (f)(1, 2,) "},
 		{" 1 - 2 "},
 		{" 1 > 3 == false "},
+		{" ref 1 "},
+		{" ref ref 1 "},
 	}
 	for i, test := range tests {
 		l := NewLexer("test.gy", strings.NewReader(fmt.Sprintf("def test() { %s }", test.src)))

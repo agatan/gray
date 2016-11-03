@@ -56,6 +56,7 @@ var keywords map[string]int = map[string]int{
 	"false":  FALSE,
 	"let":    LET,
 	"def":    DEF,
+	"ref":    REF,
 	"if":     IF,
 	"else":   ELSE,
 	"return": RETURN,

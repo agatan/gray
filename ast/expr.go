@@ -29,6 +29,12 @@ type (
 		Lit  string
 	}
 
+	// RefExpr represent creating reference expression.
+	RefExpr struct {
+		ExprImpl
+		Value Expr
+	}
+
 	// InfixExpr represent binary operation expression.
 	InfixExpr struct {
 		ExprImpl

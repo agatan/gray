@@ -54,7 +54,7 @@ import (
 }
 
 %token<tok> IDENT UIDENT INT TRUE FALSE STRING
-%token<tok> DEF LET IF ELSE RETURN WHILE
+%token<tok> DEF LET REF IF ELSE RETURN WHILE
 %token<tok> EQEQ NEQ GE LG OROR ANDAND
 %token<tok> ARROW
 
@@ -65,6 +65,7 @@ import (
 
 %left '+' '-'
 %left '*' '/' '%'
+%right REF
 
 %%
 
@@ -198,6 +199,11 @@ expr:
 	| if_expr
 	{
 		$$ = $1
+	}
+	| REF expr
+	{
+		$$ = &ast.RefExpr{Value: $2}
+		$$.SetPosition($1.Position())
 	}
 	| expr '(' opt_terms exprs opt_terms ')'
 	{
