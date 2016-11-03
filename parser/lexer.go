@@ -4,8 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
-	"os"
 	"text/scanner"
 	"unicode/utf8"
 
@@ -15,18 +13,8 @@ import (
 
 //go:generate go tool yacc -o parser.go parser.go.y
 
-var debugMode = os.Getenv("GRAY_DEBUG") != ""
-
-func debugf(f string, args ...interface{}) {
-	if debugMode {
-		log.Printf("debug: "+f, args...)
-	}
-}
-
 func init() {
-	if debugMode {
-		yyErrorVerbose = true
-	}
+	yyErrorVerbose = true
 }
 
 const (
@@ -115,7 +103,6 @@ func (l *Lexer) scan() (tok int, lit string, pos token.Position, err error) {
 		Column: spos.Column,
 	}
 	t := l.scanner.Scan()
-	debugf("Scan: %s", scanner.TokenString(t))
 	lit = l.scanner.TokenText()
 	switch t {
 	case scanner.EOF:
