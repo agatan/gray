@@ -29,3 +29,13 @@ type Var struct {
 func NewVar(name string, typ Type) *Var {
 	return &Var{object: object{scope: nil, name: name, typ: typ}}
 }
+
+// TypeName represent a declared type.
+type TypeName struct {
+	object
+}
+
+// NewTypeName creates a new typename object.
+func NewTypeName(name string, typ Type) *TypeName {
+	return &TypeName{object: object{scope: nil, name: name, typ: typ}}
+}
