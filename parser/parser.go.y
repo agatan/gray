@@ -55,9 +55,10 @@ import (
 
 %token<tok> IDENT UIDENT INT TRUE FALSE STRING
 %token<tok> DEF LET REF IF ELSE RETURN WHILE
-%token<tok> EQEQ NEQ GE LG OROR ANDAND
+%token<tok> EQEQ NEQ GE LG OROR ANDAND ASSIGN
 %token<tok> ARROW
 
+%nonassoc ASSIGN
 %left OROR
 %left ANDAND
 %nonassoc EQEQ NEQ
@@ -273,6 +274,11 @@ expr:
 	| expr LE expr
 	{
 		$$ = &ast.InfixExpr{LHS: $1, Operator: "<=", RHS: $3}
+		$$.SetPosition($1.Position())
+	}
+	| expr ASSIGN expr
+	{
+		$$ = &ast.InfixExpr{LHS: $1, Operator: ":=", RHS: $3}
 		$$.SetPosition($1.Position())
 	}
 

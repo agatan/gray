@@ -179,6 +179,13 @@ func (l *Lexer) scan() (tok int, lit string, pos token.Position, err error) {
 				lit = "||"
 				return
 			}
+		case ':':
+			if l.scanner.Peek() == '=' {
+				l.scanner.Next()
+				tok = ASSIGN
+				lit = ":="
+				return
+			}
 		}
 		tok = int(t)
 		return
