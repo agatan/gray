@@ -1,0 +1,13 @@
+def fib(n: Int) -> Int {
+    if n == 0 || n == 1 {
+        n
+    } else {
+        fib(n-1) + fib(n-2)
+    }
+}
+
+def main() {
+    println(fib(1))
+    println(fib(3))
+    println(fib(10))
+}
