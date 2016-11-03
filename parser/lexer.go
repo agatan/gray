@@ -52,12 +52,13 @@ func NewLexer(filename string, r io.Reader) *Lexer {
 }
 
 var keywords map[string]int = map[string]int{
-	"true":  TRUE,
-	"false": FALSE,
-	"let":   LET,
-	"def":   DEF,
-	"if":    IF,
-	"else":  ELSE,
+	"true":   TRUE,
+	"false":  FALSE,
+	"let":    LET,
+	"def":    DEF,
+	"if":     IF,
+	"else":   ELSE,
+	"return": RETURN,
 }
 
 func convertString(s string) (string, error) {

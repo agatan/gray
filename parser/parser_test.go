@@ -64,6 +64,21 @@ func TestIfStmt(t *testing.T) {
 	}
 }
 
+func TestReturnStmt(t *testing.T) {
+	tests := []string{
+		` return `,
+		` return "value" `,
+		` return 1 + 3 `,
+	}
+	for i, test := range tests {
+		l := NewLexer("test.gy", strings.NewReader(fmt.Sprintf("def test() { %s }", test)))
+		_, err := Parse(l)
+		if err != nil {
+			t.Fatalf("#%d: parsing '%s': %s", i, test, err)
+		}
+	}
+}
+
 func TestDefDecl(t *testing.T) {
 	test := `
 	def test(

@@ -29,4 +29,10 @@ type (
 		Type  Type // if nil, should be infered.
 		Value Expr
 	}
+
+	// ReturnStmt represent return statement
+	ReturnStmt struct {
+		StmtImpl
+		X Expr // if nil, return Unit.
+	}
 )
