@@ -47,4 +47,12 @@ type (
 		Func Expr
 		Args []Expr
 	}
+
+	// IfExpr represent if expression.
+	IfExpr struct {
+		ExprImpl
+		Cond Expr
+		Then *BlockExpr
+		Else Expr // Else is always *IfExpr or *BlockExpr (else if or else)
+	}
 )

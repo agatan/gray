@@ -46,6 +46,22 @@ func TestLetStmt(t *testing.T) {
 	}
 }
 
+func TestIfStmt(t *testing.T) {
+	tests := []string{
+		` if x { 0 } `,
+		` if x { 0 } else { 1 } `,
+		` if x { 0 } else if y { 1 } `,
+		` if x { 0 } else if y { 1 } else { 2 } `,
+	}
+	for i, test := range tests {
+		l := NewLexer("test.gy", strings.NewReader(fmt.Sprintf("def test(x: Bool) -> Int { %s }", test)))
+		_, err := Parse(l)
+		if err != nil {
+			t.Fatalf("#%d: parsing '%s': %s", i, test, err)
+		}
+	}
+}
+
 func TestDefDecl(t *testing.T) {
 	test := `
 	def test(

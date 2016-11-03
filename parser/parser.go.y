@@ -18,6 +18,7 @@ import (
 %type<stmt> let_stmt
 
 %type<expr> expr
+%type<if_expr> if_expr
 %type<block_expr> block_expr
 %type<expr> primitive_expr
 
@@ -38,6 +39,7 @@ import (
 	expr       ast.Expr
 	exprs      []ast.Expr
 	block_expr *ast.BlockExpr
+	if_expr    *ast.IfExpr
 	typ        ast.Type
 
 	ident      *ast.Ident
@@ -52,7 +54,7 @@ import (
 }
 
 %token<tok> IDENT UIDENT INT TRUE FALSE STRING
-%token<tok> DEF LET
+%token<tok> DEF LET IF ELSE
 %token<tok> ARROW
 
 %%
@@ -169,6 +171,10 @@ expr:
 	{
 		$$ = $1
 	}
+	| if_expr
+	{
+		$$ = $1
+	}
 	| expr '(' opt_terms exprs opt_terms ')'
 	{
 		$$ = &ast.CallExpr{Func: $1, Args: $4}
@@ -182,6 +188,23 @@ block_expr:
 		if l, ok := yylex.(*Lexer); ok {
 			$$.SetPosition(l.pos)
 		}
+	}
+
+if_expr:
+	IF expr block_expr
+	{
+		$$ = &ast.IfExpr{Cond: $2, Then: $3}
+		$$.SetPosition($1.Position())
+	}
+	| IF expr block_expr ELSE block_expr
+	{
+		$$ = &ast.IfExpr{Cond: $2, Then: $3, Else: $5}
+		$$.SetPosition($1.Position())
+	}
+	| IF expr block_expr ELSE if_expr
+	{
+		$$ = &ast.IfExpr{Cond: $2, Then: $3, Else: $5}
+		$$.SetPosition($1.Position())
 	}
 
 primitive_expr:

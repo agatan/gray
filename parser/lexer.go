@@ -68,6 +68,8 @@ var keywords map[string]int = map[string]int{
 	"false": FALSE,
 	"let":   LET,
 	"def":   DEF,
+	"if":    IF,
+	"else":  ELSE,
 }
 
 func convertString(s string) (string, error) {
