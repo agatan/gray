@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -69,6 +70,42 @@ var keywords map[string]int = map[string]int{
 	"def":   DEF,
 }
 
+func convertString(s string) (string, error) {
+	ret := []rune{}
+	src := []rune(s)
+	// skip '"'
+	src = src[1 : len(src)-1]
+	for i := 0; i < len(src); i++ {
+		if src[i] != '\\' {
+			ret = append(ret, src[i])
+			continue
+		}
+		if i == len(src)-1 {
+			return "", errors.New("unexpected end of string")
+		}
+		i++
+		switch src[i] {
+		case 'b':
+			ret = append(ret, '\b')
+		case 'f':
+			ret = append(ret, '\f')
+		case 'r':
+			ret = append(ret, '\r')
+		case 'n':
+			ret = append(ret, '\n')
+		case 't':
+			ret = append(ret, '\t')
+		case '"':
+			ret = append(ret, '"')
+		case '\\':
+			ret = append(ret, '\\')
+		default:
+			return "", errors.New("unexpected '\\'")
+		}
+	}
+	return string(ret), nil
+}
+
 func (l *Lexer) scan() (tok int, lit string, pos token.Position, err error) {
 	spos := l.scanner.Pos()
 	pos = token.Position{
@@ -95,6 +132,10 @@ func (l *Lexer) scan() (tok int, lit string, pos token.Position, err error) {
 		} else {
 			tok = IDENT
 		}
+	case scanner.String:
+		tok = STRING
+		lit, err = convertString(lit)
+		return
 	default:
 		switch t {
 		case '-':

@@ -11,6 +11,7 @@ const (
 	UNIT
 	BOOL
 	INT
+	STRING
 	literal_end
 )
 

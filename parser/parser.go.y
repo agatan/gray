@@ -51,7 +51,7 @@ import (
 	opt_terms  token.Token
 }
 
-%token<tok> IDENT UIDENT INT TRUE FALSE
+%token<tok> IDENT UIDENT INT TRUE FALSE STRING
 %token<tok> DEF LET
 %token<tok> ARROW
 
@@ -202,6 +202,11 @@ primitive_expr:
 	| FALSE
 	{
 		$$ = &ast.BasicLit{Kind: token.BOOL, Lit: $1.Lit}
+		$$.SetPosition($1.Position())
+	}
+	| STRING
+	{
+		$$ = &ast.BasicLit{Kind: token.STRING, Lit: $1.Lit}
 		$$.SetPosition($1.Position())
 	}
 	| '(' opt_terms expr opt_terms ')'
