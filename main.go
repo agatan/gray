@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
@@ -12,7 +13,12 @@ func main() {
 	ds, err := parser.Parse(l)
 	if err != nil {
 		fmt.Println(err)
+		return
+	}
+	bs, err := json.Marshal(ds)
+	if err != nil {
+		fmt.Println(err)
 	} else {
-		fmt.Printf("%#v\n", ds)
+		fmt.Println(string(bs))
 	}
 }
