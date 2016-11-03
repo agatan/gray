@@ -10,10 +10,16 @@ import (
 
 // Scope represents literary scope.
 // Each function has its own scope and each block also does.
+// Scope should be created via NewScope.
 type Scope struct {
 	parent *Scope
 	elems  map[string]Object
 	name   string // for debug info. (may be "")
+}
+
+// NewScope creates a new root scope.
+func NewScope(name string) *Scope {
+	return &Scope{parent: builtinScope, elems: map[string]Object{}, name: name}
 }
 
 // Parent returns the scope's surrounding scope (if exists).
