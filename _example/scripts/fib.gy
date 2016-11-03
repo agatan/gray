@@ -7,7 +7,7 @@ def fib(n: Int) -> Int {
 }
 
 def fib2(n: Int) -> Int {
-    let a = ref 0
+    let a: Ref<Int> = ref 0
     let b = ref 1
     let i = ref 0
     while @i < n {
