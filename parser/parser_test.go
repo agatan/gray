@@ -114,3 +114,17 @@ func TestDefDecl(t *testing.T) {
 		t.Error("def declaration does not work")
 	}
 }
+
+func TestType(t *testing.T) {
+	tests := []string{
+		` Int `,
+		` Unit `,
+	}
+	for i, test := range tests {
+		l := NewLexer("test.gy", strings.NewReader(fmt.Sprintf(` def test(x: %s) {} `, test)))
+		_, err := Parse(l)
+		if err != nil {
+			t.Fatalf("#%d: parsing '%s': %s", i, test, err)
+		}
+	}
+}
