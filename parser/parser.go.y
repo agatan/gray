@@ -60,6 +60,7 @@ import (
 %token<tok> EQEQ NEQ GE LG OROR ANDAND ASSIGN
 %token<tok> ARROW
 
+%right ARROW
 %nonassoc ASSIGN
 %left OROR
 %left ANDAND
@@ -361,6 +362,11 @@ typ:
 	{
 		$$ = &ast.FuncType{Params: $2, Result: $5}
 		$$.SetPosition($4.Position())
+	}
+	| typ ARROW typ
+	{
+		$$ = &ast.FuncType{Params: []*ast.Param{{Type: $1}}, Result: $3}
+		$$.SetPosition($2.Position())
 	}
 
 func_type_params:
