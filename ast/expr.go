@@ -35,6 +35,12 @@ type (
 		Value Expr
 	}
 
+	// DerefExpr represent dereference expression.
+	DerefExpr struct {
+		ExprImpl
+		Ref Expr
+	}
+
 	// InfixExpr represent binary operation expression.
 	InfixExpr struct {
 		ExprImpl

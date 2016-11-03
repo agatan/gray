@@ -67,6 +67,7 @@ import (
 %left '+' '-'
 %left '*' '/' '%'
 %right REF
+%right UNARY
 
 %%
 
@@ -205,6 +206,13 @@ expr:
 	{
 		$$ = &ast.RefExpr{Value: $2}
 		$$.SetPosition($1.Position())
+	}
+	| '@' expr %prec UNARY
+	{
+		$$ = &ast.DerefExpr{Ref: $2}
+		if l, ok := yylex.(*Lexer); ok {
+			$$.SetPosition(l.pos)
+		}
 	}
 	| expr '(' opt_terms exprs opt_terms ')'
 	{
