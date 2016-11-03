@@ -17,7 +17,6 @@ clean:
 	$(RM) $(TARGET) parser/parser.go
 
 $(TARGET): $(SRCS) parser/parser.go
+	go generate ./...
 	go build
 
-parser/parser.go: parser/parser.go.y
-	go generate ./...
