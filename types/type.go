@@ -9,7 +9,6 @@ type Type interface {
 // BasicKind describes the kind of basic types.
 type BasicKind int
 
-//go:generate stringer -type=BasicKind
 const (
 	Invalid BasicKind = iota
 
@@ -21,10 +20,13 @@ const (
 
 // Basic represent basic types.
 type Basic struct {
-	Kind BasicKind
+	kind BasicKind
+	name string
 }
 
 func (*Basic) typ() {}
 func (b *Basic) String() string {
-	return b.Kind.String()
+	return b.name
 }
+func (b *Basic) Kind() BasicKind { return b.kind }
+func (b *Basic) Name() string    { return b.name }
