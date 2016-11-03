@@ -54,7 +54,7 @@ import (
 }
 
 %token<tok> IDENT UIDENT INT TRUE FALSE STRING
-%token<tok> DEF LET IF ELSE RETURN
+%token<tok> DEF LET IF ELSE RETURN WHILE
 %token<tok> EQEQ NEQ GE LG OROR ANDAND
 %token<tok> ARROW
 
@@ -158,6 +158,11 @@ stmt:
 	| RETURN
 	{
 		$$ = &ast.ReturnStmt{}
+		$$.SetPosition($1.Position())
+	}
+	| WHILE expr block_expr
+	{
+		$$ = &ast.WhileStmt{Cond: $2, Body: $3}
 		$$.SetPosition($1.Position())
 	}
 

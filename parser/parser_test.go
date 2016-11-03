@@ -79,6 +79,19 @@ func TestReturnStmt(t *testing.T) {
 	}
 }
 
+func TestWhileStmt(t *testing.T) {
+	l := NewLexer("test.gy", strings.NewReader(`
+	def test() {
+		while true {
+			println("HELLO")
+		}
+	}`))
+	_, err := Parse(l)
+	if err != nil {
+		t.Fatalf("%s", err)
+	}
+}
+
 func TestDefDecl(t *testing.T) {
 	test := `
 	def test(

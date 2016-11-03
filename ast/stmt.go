@@ -35,4 +35,11 @@ type (
 		StmtImpl
 		X Expr // if nil, return Unit.
 	}
+
+	// WhileStmt represent while statement.
+	WhileStmt struct {
+		StmtImpl
+		Cond Expr
+		Body *BlockExpr
+	}
 )
