@@ -23,8 +23,8 @@ import (
 %type<expr> primitive_expr
 
 %type<typ> typ
-%type<params> rev_func_type_params
-%type<params> func_type_params
+%type<types> rev_type_params
+%type<types> type_params
 
 %type<ident> ident
 %type<exprs> exprs
@@ -43,6 +43,7 @@ import (
 	block_expr *ast.BlockExpr
 	if_expr    *ast.IfExpr
 	typ        ast.Type
+	types      []ast.Type
 
 	ident      *ast.Ident
 	tok        token.Token
@@ -358,9 +359,13 @@ typ:
 		$$ = &ast.TypeIdent{Name: $1.Lit}
 		$$.SetPosition($1.Position())
 	}
-	| '(' func_type_params ')' ARROW typ
+	| '(' type_params ')' ARROW typ
 	{
-		$$ = &ast.FuncType{Params: $2, Result: $5}
+		ps := make([]*ast.Param, len($2))
+		for i, t := range $2 {
+			ps[i] = &ast.Param{Type: t}
+		}
+		$$ = &ast.FuncType{Params: ps, Result: $5}
 		$$.SetPosition($4.Position())
 	}
 	| typ ARROW typ
@@ -368,28 +373,33 @@ typ:
 		$$ = &ast.FuncType{Params: []*ast.Param{{Type: $1}}, Result: $3}
 		$$.SetPosition($2.Position())
 	}
-
-func_type_params:
-	rev_func_type_params
+	| typ '<' type_params '>'
 	{
-		$$ = make([]*ast.Param, len($1))
+		$$ = &ast.InstType{Base: $1, Args: $3}
+		$$.SetPosition($1.Position())
+	}
+
+type_params:
+	rev_type_params
+	{
+		$$ = make([]ast.Type, len($1))
 		for i, p := range $1 {
 			$$[len($1)-i-1] = p
 		}
 	}
 
-rev_func_type_params:
+rev_type_params:
 	/* empty */
 	{
 		$$ = nil
 	}
 	| typ
 	{
-		$$ = []*ast.Param{&ast.Param{Type: $1}}
+		$$ = []ast.Type{$1}
 	}
-	| typ ',' rev_func_type_params
+	| typ ',' rev_type_params
 	{
-		$$ = append($3, &ast.Param{Type: $1})
+		$$ = append($3, $1)
 	}
 
 ident:

@@ -28,4 +28,11 @@ type (
 		Params []*Param
 		Result Type
 	}
+
+	// InstType represent instantiation types.
+	InstType struct {
+		TypeImpl
+		Base Type
+		Args []Type
+	}
 )
