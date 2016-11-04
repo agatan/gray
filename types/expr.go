@@ -52,6 +52,23 @@ func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
 			}
 		}
 		return ref.Args()[0], nil
+	case *ast.InfixExpr:
+		lty, err := c.checkExpr(s, e.LHS)
+		if err != nil {
+			return nil, err
+		}
+		rty, err := c.checkExpr(s, e.RHS)
+		if err != nil {
+			return nil, err
+		}
+		ty, err := c.checkInfixExpr(s, e.Operator, lty, rty, e.Position())
+		if err != nil {
+			return nil, err
+		}
+		return ty, nil
+	case *ast.ParenExpr:
+		ty, err := c.checkExpr(s, e.X)
+		return ty, err
 	case *ast.BlockExpr:
 		if len(e.Stmts) == 0 {
 			return BasicTypes[Unit], nil

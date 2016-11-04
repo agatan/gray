@@ -21,6 +21,14 @@ func TestExpr(t *testing.T) {
 			&ast.DerefExpr{Ref: &ast.RefExpr{Value: &ast.BasicLit{Kind: token.INT}}},
 			BasicTypes[Int],
 		},
+		{
+			&ast.InfixExpr{
+				Operator: "+",
+				LHS:      &ast.BasicLit{Kind: token.INT},
+				RHS:      &ast.BasicLit{Kind: token.INT},
+			},
+			BasicTypes[Int],
+		},
 	}
 
 	for i, test := range tests {
