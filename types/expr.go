@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/agatan/gray/ast"
+	"github.com/agatan/gray/token"
 )
 
 func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
@@ -17,6 +18,19 @@ func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
 			}
 		}
 		return obj.Type(), nil
+	case *ast.BasicLit:
+		switch e.Kind {
+		case token.UNIT:
+			return BuiltinTypes[Unit], nil
+		case token.BOOL:
+			return BuiltinTypes[Bool], nil
+		case token.INT:
+			return BuiltinTypes[Int], nil
+		case token.STRING:
+			return BuiltinTypes[String], nil
+		default:
+			panic("internal error: unreachable")
+		}
 	case *ast.BlockExpr:
 		if len(e.Stmts) == 0 {
 			return BuiltinTypes[Unit], nil
