@@ -111,3 +111,9 @@ func NewGenericType(name string, params []*TypeName) *GenericType {
 
 func (*GenericType) typ()             {}
 func (g *GenericType) String() string { return fmt.Sprintf("%s<with %d types>", g.name, len(g.params)) }
+
+// Name returns the name of GenericType g.
+func (g *GenericType) Name() string { return g.name }
+
+// Params returns the parameters of GenericType g.
+func (g *GenericType) Params() []*TypeName { return g.params }
