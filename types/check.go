@@ -128,6 +128,9 @@ func (c *Checker) isSameType(lhs, rhs Type) bool {
 func (c *Checker) Check(ds []ast.Decl) (*Scope, error) {
 	for _, d := range ds {
 		if err := c.checkDecl(c.scope, d); err != nil {
+			if e, ok := err.(*Error); ok {
+				e.Filename = c.Filename
+			}
 			return nil, err
 		}
 	}
