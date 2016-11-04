@@ -88,7 +88,7 @@ func opComparison(op string, lhs, rhs Type) (Type, error) {
 		}
 	}
 	if lbasic.Kind() == rbasic.Kind() {
-		return lbasic, nil
+		return BasicTypes[Bool], nil
 	}
 	return nil, &Error{
 		Message: fmt.Sprintf("invalid type %s and %s for operator '%s'", lhs, rhs, op),
