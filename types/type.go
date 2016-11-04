@@ -142,3 +142,9 @@ func (i *InstType) String() string {
 	fmt.Fprintf(buf, ">")
 	return buf.String()
 }
+
+// Base returns a base type of InstType i.
+func (i *InstType) Base() *GenericType { return i.base }
+
+// Args returns args of InstType i.
+func (i *InstType) Args() []Type { return i.args }
