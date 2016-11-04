@@ -39,6 +39,14 @@ func (c *Checker) checkStmt(s *Scope, stmt ast.Stmt) error {
 		}
 		s.Insert(NewVar(stmt.Ident.Name, ety))
 		return nil
+	case *ast.ReturnStmt:
+		// TODO(agatan): Should record return types to check function return types!
+		ety, err := c.checkExpr(s, stmt.X)
+		if err != nil {
+			return nil
+		}
+		c.returnInfos = append(c.returnInfos, returnInfo{typ: ety, pos: stmt.Position()})
+		return nil
 	default:
 		panic("unimplemented yet")
 	}

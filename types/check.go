@@ -4,12 +4,20 @@ import (
 	"fmt"
 
 	"github.com/agatan/gray/ast"
+	"github.com/agatan/gray/token"
 )
+
+// returnInfo holds return statements' informations.
+type returnInfo struct {
+	typ Type
+	pos token.Position
+}
 
 // Checker contains a type checking state.
 type Checker struct {
-	Filename string
-	scope    *Scope
+	Filename    string
+	scope       *Scope
+	returnInfos []returnInfo // returnTypes is a set of return types in the current function body.
 }
 
 // NewChecker creates a Checker with given file name.

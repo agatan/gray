@@ -22,6 +22,7 @@ func (c *Checker) checkDecl(s *Scope, d ast.Decl) error {
 		f := NewFunc(d.Ident.Name, fty)
 		f.scope = fscope
 		s.Insert(f)
+		c.returnInfos = nil
 		ty, err := c.checkExpr(fscope, d.Body)
 		if err != nil {
 			return err
@@ -30,6 +31,14 @@ func (c *Checker) checkDecl(s *Scope, d ast.Decl) error {
 			return &Error{
 				Message: fmt.Sprintf("type mismatch: expected %s, but got %s", sig.Result(), ty),
 				Pos:     d.Position(),
+			}
+		}
+		for _, info := range c.returnInfos {
+			if !c.isSameType(sig.Result(), info.typ) {
+				return &Error{
+					Message: fmt.Sprintf("type mismatch: expected %s, but got %s", sig.Result(), info.typ),
+					Pos:     info.pos,
+				}
 			}
 		}
 		return nil
