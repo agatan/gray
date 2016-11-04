@@ -12,9 +12,10 @@ import (
 // Each function has its own scope and each block also does.
 // Scope should be created via NewScope.
 type Scope struct {
-	parent *Scope
-	elems  map[string]Object
-	name   string // for debug info. (may be "")
+	parent   *Scope
+	children []*Scope
+	elems    map[string]Object
+	name     string // for debug info. (may be "")
 }
 
 // NewScope creates a new root scope.
@@ -24,6 +25,14 @@ func NewScope(name string) *Scope {
 
 // Parent returns the scope's surrounding scope (if exists).
 func (s *Scope) Parent() *Scope { return s.parent }
+
+// newChild returns a new child scope.
+func (s *Scope) newChild(name string) *Scope {
+	c := NewScope(name)
+	c.parent = s
+	s.children = append(s.children, c)
+	return c
+}
 
 // Names returns a slice of object names.
 func (s *Scope) Names() []string {
@@ -85,6 +94,13 @@ func (s *Scope) Dump(w io.Writer, depth int, verbose bool) {
 			fmt.Fprintf(w, "%s%s(%s)\n", nindent, name, s.elems[name].Type())
 		} else {
 			fmt.Fprintf(w, "%s%s\n", nindent, name)
+		}
+	}
+
+	if verbose {
+		// children
+		for _, c := range s.children {
+			c.Dump(w, depth+1, verbose)
 		}
 	}
 

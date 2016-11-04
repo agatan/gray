@@ -9,7 +9,14 @@ func (c *Checker) checkDecl(s *Scope, d ast.Decl) error {
 		if err != nil {
 			return err
 		}
-		s.Insert(NewFunc(d.Ident.Name, fty))
+		fscope := s.newChild(d.Ident.Name)
+		for _, v := range fty.(*Signature).Params().vars {
+			fscope.Insert(v)
+		}
+		fty.(*Signature).scope = fscope
+		f := NewFunc(d.Ident.Name, fty)
+		f.scope = fscope
+		s.Insert(f)
 		return nil
 	default:
 		panic("internal error: unreachable")
