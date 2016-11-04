@@ -117,3 +117,28 @@ func (g *GenericType) Name() string { return g.name }
 
 // Params returns the parameters of GenericType g.
 func (g *GenericType) Params() []*TypeName { return g.params }
+
+// InstType returns a new generic type's instance.
+type InstType struct {
+	base *GenericType
+	args []Type
+}
+
+// NewInstType returns a new instance of generic type g.
+func NewInstType(g *GenericType, args []Type) *InstType {
+	return &InstType{base: g, args: args}
+}
+
+func (i *InstType) typ() {}
+func (i *InstType) String() string {
+	buf := &bytes.Buffer{}
+	fmt.Fprintf(buf, "%s<", i.base.Name())
+	for i, a := range i.args {
+		if i != 0 {
+			fmt.Fprintf(buf, ", ")
+		}
+		fmt.Fprintf(buf, a.String())
+	}
+	fmt.Fprintf(buf, ">")
+	return buf.String()
+}
