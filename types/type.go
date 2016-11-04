@@ -3,6 +3,7 @@ package types
 import (
 	"bytes"
 	"fmt"
+	"reflect"
 )
 
 // Type provides an interface of types' type.
@@ -99,7 +100,7 @@ func (s *Signature) Result() Type { return s.result }
 
 // GenericType represents a generic type (e.g. Ref<Int>).
 type GenericType struct {
-	instances [][]Type // a set of instantiate args
+	instances []*InstType // a set of instantiate args
 	name      string
 	params    []*TypeName
 }
@@ -117,6 +118,20 @@ func (g *GenericType) Name() string { return g.name }
 
 // Params returns the parameters of GenericType g.
 func (g *GenericType) Params() []*TypeName { return g.params }
+
+// Instantiate returns a instance of given arguments.
+// If already instantiated, Instantiate returns it.
+// Otherwise, creates a new instance and returns it.
+func (g *GenericType) Instantiate(args []Type) *InstType {
+	for _, instance := range g.instances {
+		if reflect.DeepEqual(instance.Args(), args) {
+			return instance
+		}
+	}
+	it := NewInstType(g, args)
+	g.instances = append(g.instances, it)
+	return it
+}
 
 // InstType returns a new generic type's instance.
 type InstType struct {
