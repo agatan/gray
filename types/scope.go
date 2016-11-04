@@ -28,7 +28,7 @@ func (s *Scope) Parent() *Scope { return s.parent }
 // Names returns a slice of object names.
 func (s *Scope) Names() []string {
 	ss := make([]string, 0, len(s.elems))
-	for name, _ := range s.elems {
+	for name := range s.elems {
 		ss = append(ss, name)
 	}
 	sort.Strings(ss)

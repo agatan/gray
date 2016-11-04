@@ -15,6 +15,7 @@ type Type interface {
 // BasicKind describes the kind of basic types.
 type BasicKind int
 
+// Basic builtin types.
 const (
 	Invalid BasicKind = iota
 
@@ -34,8 +35,12 @@ func (*Basic) typ() {}
 func (b *Basic) String() string {
 	return b.name
 }
+
+// Kind returns the kind of Basic b.
 func (b *Basic) Kind() BasicKind { return b.kind }
-func (b *Basic) Name() string    { return b.name }
+
+// Name returns the name of Basic b.
+func (b *Basic) Name() string { return b.name }
 
 // Vars represent a sequence of *Var s.
 type Vars struct {
@@ -48,12 +53,12 @@ func NewVars(x ...*Var) *Vars {
 }
 
 // Len returns the number of variables.
-func (v *Vars) Len() int {
-	return len(v.vars)
+func (vs *Vars) Len() int {
+	return len(vs.vars)
 }
 
 // At returns the i'th variable.
-func (v *Vars) At(i int) *Var { return v.vars[i] }
+func (vs *Vars) At(i int) *Var { return vs.vars[i] }
 
 // String returns a string representation of Vars v.
 func (vs *Vars) String() string {
