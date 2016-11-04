@@ -20,8 +20,8 @@ func NewChecker(filename string) *Checker {
 func (c *Checker) checkType(s *Scope, t ast.Type) (Type, error) {
 	switch t := t.(type) {
 	case *ast.TypeIdent:
-		obj, ok := s.LookupParent(t.Name)
-		if !ok {
+		obj := s.LookupParent(t.Name)
+		if obj == nil {
 			return nil, &Error{Message: fmt.Sprintf("Unknown type: %s", t.Name), Pos: t.Position()}
 		}
 		tobj, ok := obj.(*TypeName)
@@ -55,11 +55,13 @@ func (c *Checker) checkType(s *Scope, t ast.Type) (Type, error) {
 		args := make([]Type, len(t.Args))
 		for i, a := range t.Args {
 			aty, err := c.checkType(s, a)
-			if er != nil {
+			if err != nil {
 				return nil, err
 			}
 			args[i] = aty
 		}
 		return base.Instantiate(args), nil
+	default:
+		panic("internal error: unreachable clause")
 	}
 }
