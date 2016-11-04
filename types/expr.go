@@ -123,6 +123,38 @@ func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
 			}
 		}
 		return sig.Result(), nil
+	case *ast.IfExpr:
+		condTy, err := c.checkExpr(s, e.Cond)
+		if err != nil {
+			return nil, err
+		}
+		if !c.isSameType(BasicTypes[Bool], condTy) {
+			return nil, &Error{
+				Message: fmt.Sprintf("type mismatch: expected %s, but got %s", BasicTypes[Bool], condTy),
+				Pos:     e.Cond.Position(),
+			}
+		}
+		thenTy, err := c.checkExpr(s, e.Then)
+		if err != nil {
+			return nil, err
+		}
+		var elseTy Type
+		if e.Else != nil {
+			ety, err := c.checkExpr(s, e.Else)
+			if err != nil {
+				return nil, err
+			}
+			elseTy = ety
+		} else {
+			elseTy = BasicTypes[Unit]
+		}
+		if !c.isSameType(thenTy, elseTy) {
+			return nil, &Error{
+				Message: fmt.Sprintf("type mismatch: %s and %s", thenTy, elseTy),
+				Pos:     e.Position(),
+			}
+		}
+		return thenTy, nil
 	default:
 		panic("unimplemented yet")
 	}
