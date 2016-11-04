@@ -156,6 +156,6 @@ func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
 		}
 		return thenTy, nil
 	default:
-		panic("unimplemented yet")
+		panic("internal error: unreachable")
 	}
 }
