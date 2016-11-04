@@ -39,6 +39,19 @@ func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
 		ref := builtinGenericTypes[refType]
 		t := ref.Instantiate([]Type{ty})
 		return t, nil
+	case *ast.DerefExpr:
+		ty, err := c.checkExpr(s, e.Ref)
+		if err != nil {
+			return nil, err
+		}
+		ref, ok := ty.(*InstType)
+		if !ok || !c.isSameType(ref.Base(), builtinGenericTypes[refType]) {
+			return nil, &Error{
+				Message: fmt.Sprintf("type mismatch: expected reference type, but got %s", ty),
+				Pos:     e.Position(),
+			}
+		}
+		return ref.Args()[0], nil
 	case *ast.BlockExpr:
 		if len(e.Stmts) == 0 {
 			return BasicTypes[Unit], nil
