@@ -120,7 +120,7 @@ func (c *Checker) isSameType(lhs, rhs Type) bool {
 		}
 		return true
 	default:
-		panic("unimplemented yet")
+		panic("internal error: unreachable")
 	}
 }
 
