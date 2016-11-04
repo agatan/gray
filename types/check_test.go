@@ -29,6 +29,13 @@ func TestExpr(t *testing.T) {
 			},
 			BasicTypes[Int],
 		},
+		{
+			&ast.CallExpr{
+				Func: &ast.Ident{Name: BuiltinPrintInt},
+				Args: []ast.Expr{&ast.BasicLit{Kind: token.INT}},
+			},
+			BasicTypes[Unit],
+		},
 	}
 
 	for i, test := range tests {

@@ -42,6 +42,23 @@ func defBuiltinGenericTypes() {
 	}
 }
 
+const (
+	BuiltinPrintInt = "print_int"
+)
+
+var builtinFunctions = []struct {
+	name string
+	sig  *Signature
+}{
+	{BuiltinPrintInt, NewSignature(nil, NewVars(NewVar("x", BasicTypes[Int])), BasicTypes[Unit])},
+}
+
+func defBuiltinFunctions() {
+	for _, t := range builtinFunctions {
+		defObject(NewFunc(t.name, t.sig))
+	}
+}
+
 func defObject(obj Object) {
 	name := obj.Name()
 	if strings.Contains(name, " ") {
@@ -56,4 +73,5 @@ func init() {
 	builtinScope = &Scope{name: "builtin"}
 	defBasicTypes()
 	defBuiltinGenericTypes()
+	defBuiltinFunctions()
 }
