@@ -128,6 +128,12 @@ func (c *Checker) isSameType(lhs, rhs Type) bool {
 		}
 		return true
 	default:
+		if _, ok := lhs.(*Wildcard); ok {
+			return true
+		}
+		if _, ok := rhs.(*Wildcard); ok {
+			return true
+		}
 		panic("internal error: unreachable")
 	}
 }

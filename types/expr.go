@@ -74,20 +74,15 @@ func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
 			return BasicTypes[Unit], nil
 		}
 		blockScope := s.newChild("")
-		for _, stmt := range e.Stmts[:len(e.Stmts)-1] {
-			if err := c.checkStmt(blockScope, stmt); err != nil {
+		var ty Type
+		for _, stmt := range e.Stmts[:len(e.Stmts)] {
+			t, err := c.checkStmt(blockScope, stmt)
+			if err != nil {
 				return nil, err
 			}
+			ty = t
 		}
-		last := e.Stmts[len(e.Stmts)-1]
-		if le, ok := last.(*ast.ExprStmt); ok {
-			t, err := c.checkExpr(blockScope, le.X)
-			return t, err
-		}
-		if err := c.checkStmt(blockScope, last); err != nil {
-			return nil, err
-		}
-		return BasicTypes[Unit], nil
+		return ty, nil
 	case *ast.CallExpr:
 		ty, err := c.checkExpr(s, e.Func)
 		if err != nil {

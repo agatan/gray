@@ -1,0 +1,11 @@
+def early_return(x: Int) -> Bool {
+    if x < 5 {
+        return true
+    }
+    let v: Int = if x > 3 {
+        return false
+    } else {
+        3
+    }
+    false
+}
