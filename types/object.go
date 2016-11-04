@@ -39,3 +39,13 @@ type TypeName struct {
 func NewTypeName(name string, typ Type) *TypeName {
 	return &TypeName{object: object{scope: nil, name: name, typ: typ}}
 }
+
+// Func represent a declared function
+type Func struct {
+	object
+}
+
+// NewFunc creates a new function object.
+func NewFunc(name string, typ Type) *Func {
+	return &Func{object: object{scope: nil, name: name, typ: typ}}
+}

@@ -30,3 +30,39 @@ func (b *Basic) String() string {
 }
 func (b *Basic) Kind() BasicKind { return b.kind }
 func (b *Basic) Name() string    { return b.name }
+
+// Vars represent a sequence of *Var s.
+type Vars struct {
+	vars []*Var
+}
+
+// NewVars returns a new sequence of variables.
+func NewVars(x ...*Var) *Vars {
+	return &Vars{vars: x}
+}
+
+// Len returns the number of variables.
+func (v *Vars) Len() int {
+	return len(v.vars)
+}
+
+// At returns the i'th variable.
+func (v *Vars) At(i int) *Var { return v.vars[i] }
+
+// Signature represents a function type.
+type Signature struct {
+	scope  *Scope
+	params *Vars
+	result Type
+}
+
+// NewSignature returns a new function type.
+func NewSignature(scope *Scope, params *Vars, result Type) *Signature {
+	return &Signature{scope: scope, params: params, result: result}
+}
+
+// Params returns the parameters of the signature.
+func (s *Signature) Params() *Vars { return s.params }
+
+// Result returns the return type of the signature.
+func (s *Signature) Result() Type { return s.result }
