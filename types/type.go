@@ -96,3 +96,18 @@ func (s *Signature) Params() *Vars { return s.params }
 
 // Result returns the return type of the signature.
 func (s *Signature) Result() Type { return s.result }
+
+// GenericType represents a generic type (e.g. Ref<Int>).
+type GenericType struct {
+	instances [][]Type // a set of instantiate args
+	name      string
+	params    []*TypeName
+}
+
+// NewGenericType returns a new generic type.
+func NewGenericType(name string, params []*TypeName) *GenericType {
+	return &GenericType{instances: nil, name: name, params: params}
+}
+
+func (*GenericType) typ()             {}
+func (g *GenericType) String() string { return fmt.Sprintf("%s<with %d types>", g.name, len(g.params)) }
