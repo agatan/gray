@@ -11,7 +11,7 @@ func (c *Checker) checkStmt(s *Scope, stmt ast.Stmt) error {
 	case *ast.ExprStmt:
 		ty, err := c.checkExpr(s, stmt.X)
 		if err != nil {
-			return nil
+			return err
 		}
 		if !c.isSameType(BasicTypes[Unit], ty) {
 			return &Error{
@@ -19,6 +19,25 @@ func (c *Checker) checkStmt(s *Scope, stmt ast.Stmt) error {
 				Pos:     stmt.Position(),
 			}
 		}
+		return nil
+	case *ast.LetStmt:
+		ety, err := c.checkExpr(s, stmt.Value)
+		if err != nil {
+			return err
+		}
+		if stmt.Type != nil {
+			ty, err := c.checkType(s, stmt.Type)
+			if err != nil {
+				return err
+			}
+			if !c.isSameType(ty, ety) {
+				return &Error{
+					Message: fmt.Sprintf("type mismatch: expected %s, but got %s", ty, ety),
+					Pos:     stmt.Value.Position(),
+				}
+			}
+		}
+		s.Insert(NewVar(stmt.Ident.Name, ety))
 		return nil
 	default:
 		panic("unimplemented yet")
