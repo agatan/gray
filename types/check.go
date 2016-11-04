@@ -46,6 +46,7 @@ func (c *Checker) checkType(s *Scope, t ast.Type) (Type, error) {
 			}
 			retty = r
 		} else {
+			// Result type is Unit.
 			retty = BuiltinTypes[Unit]
 		}
 		return NewSignature(nil, NewVars(vars...), retty), nil
