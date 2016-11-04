@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/agatan/gray/parser"
+	"github.com/agatan/gray/types"
 )
 
 func main() {
@@ -14,6 +15,10 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 		return
+	}
+	checker := types.NewChecker("<stdin>")
+	if err := checker.Check(ds); err != nil {
+		panic(err)
 	}
 	bs, err := json.Marshal(ds)
 	if err != nil {
