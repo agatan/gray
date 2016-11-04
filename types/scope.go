@@ -69,7 +69,7 @@ func (s *Scope) Insert(obj Object) Object {
 }
 
 // Dump dumps the contents of scope s.
-func (s *Scope) Dump(w io.Writer, depth int) {
+func (s *Scope) Dump(w io.Writer, depth int, verbose bool) {
 	const ind = ".   "
 	indent := strings.Repeat(ind, depth)
 	fmt.Fprintf(w, "%s%s scope {", indent, s.name)
@@ -81,7 +81,11 @@ func (s *Scope) Dump(w io.Writer, depth int) {
 	fmt.Fprintln(w)
 	nindent := indent + ind
 	for _, name := range s.Names() {
-		fmt.Fprintf(w, "%s%s\n", nindent, name)
+		if verbose {
+			fmt.Fprintf(w, "%s%s(%s)\n", nindent, name, s.elems[name].Type())
+		} else {
+			fmt.Fprintf(w, "%s%s\n", nindent, name)
+		}
 	}
 
 	fmt.Fprintf(w, "%s}\n", indent)
@@ -90,6 +94,6 @@ func (s *Scope) Dump(w io.Writer, depth int) {
 // String returns a string representation of the scope (for debug)
 func (s *Scope) String() string {
 	var buf bytes.Buffer
-	s.Dump(&buf, 0)
+	s.Dump(&buf, 0, false)
 	return buf.String()
 }

@@ -74,11 +74,11 @@ func (c *Checker) checkType(s *Scope, t ast.Type) (Type, error) {
 }
 
 // Check checks the types of given ast declarations.
-func (c *Checker) Check(ds []ast.Decl) error {
+func (c *Checker) Check(ds []ast.Decl) (*Scope, error) {
 	for _, d := range ds {
 		if err := c.checkDecl(c.scope, d); err != nil {
-			return err
+			return nil, err
 		}
 	}
-	return nil
+	return c.scope, nil
 }

@@ -17,9 +17,11 @@ func main() {
 		return
 	}
 	checker := types.NewChecker("<stdin>")
-	if err := checker.Check(ds); err != nil {
+	scope, err := checker.Check(ds)
+	if err != nil {
 		panic(err)
 	}
+	scope.Dump(os.Stdout, 0, true)
 	bs, err := json.Marshal(ds)
 	if err != nil {
 		fmt.Println(err)
