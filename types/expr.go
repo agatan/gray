@@ -88,6 +88,41 @@ func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
 			return nil, err
 		}
 		return BasicTypes[Unit], nil
+	case *ast.CallExpr:
+		ty, err := c.checkExpr(s, e.Func)
+		if err != nil {
+			return nil, err
+		}
+		sig, ok := ty.(*Signature)
+		if !ok {
+			return nil, &Error{
+				Message: fmt.Sprintf("%s is not callable", ty),
+				Pos:     e.Position(),
+			}
+		}
+		if sig.Params().Len() != len(e.Args) {
+			return nil, &Error{
+				Message: fmt.Sprintf(
+					"invalid number of argument: expected %d, but got %d",
+					sig.Params().Len(),
+					len(e.Args),
+				),
+				Pos: e.Position(),
+			}
+		}
+		for i, arg := range e.Args {
+			ty, err := c.checkExpr(s, arg)
+			if err != nil {
+				return nil, err
+			}
+			if !c.isSameType(sig.Params().At(i).Type(), ty) {
+				return nil, &Error{
+					Message: fmt.Sprintf("type mismatch: expected %s, but got %s", sig.Params().At(i).Type(), ty),
+					Pos:     arg.Position(),
+				}
+			}
+		}
+		return sig.Result(), nil
 	default:
 		panic("unimplemented yet")
 	}
