@@ -82,6 +82,12 @@ func (c *Checker) checkType(s *Scope, t ast.Type) (Type, error) {
 }
 
 func (c *Checker) isSameType(lhs, rhs Type) bool {
+	if _, ok := lhs.(*Wildcard); ok {
+		return true
+	}
+	if _, ok := rhs.(*Wildcard); ok {
+		return true
+	}
 	switch lhs := lhs.(type) {
 	case *Basic:
 		rhs, ok := rhs.(*Basic)
@@ -128,12 +134,6 @@ func (c *Checker) isSameType(lhs, rhs Type) bool {
 		}
 		return true
 	default:
-		if _, ok := lhs.(*Wildcard); ok {
-			return true
-		}
-		if _, ok := rhs.(*Wildcard); ok {
-			return true
-		}
 		panic("internal error: unreachable")
 	}
 }
