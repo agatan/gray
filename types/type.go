@@ -1,9 +1,14 @@
 package types
 
+import (
+	"bytes"
+	"fmt"
+)
+
 // Type provides an interface of types' type.
 type Type interface {
 	typ()
-	String() string
+	String() string // for debugging
 }
 
 // BasicKind describes the kind of basic types.
@@ -49,11 +54,36 @@ func (v *Vars) Len() int {
 // At returns the i'th variable.
 func (v *Vars) At(i int) *Var { return v.vars[i] }
 
+// String returns a string representation of Vars v.
+func (vs *Vars) String() string {
+	buf := &bytes.Buffer{}
+	fmt.Fprintf(buf, "(")
+	for i, v := range vs.vars {
+		if i != 0 {
+			fmt.Fprintf(buf, ", ")
+		}
+		if v.Name() == "" {
+			fmt.Fprintf(buf, v.Type().String())
+		} else {
+			fmt.Fprintf(buf, "%s: %s", v.Name(), v.Type().String())
+		}
+	}
+	fmt.Fprintf(buf, ")")
+	return buf.String()
+}
+
 // Signature represents a function type.
 type Signature struct {
 	scope  *Scope
 	params *Vars
 	result Type
+}
+
+func (*Signature) typ() {}
+func (s *Signature) String() string {
+	buf := &bytes.Buffer{}
+	fmt.Fprintf(buf, "%s -> %s", s.params.String(), s.result.String())
+	return buf.String()
 }
 
 // NewSignature returns a new function type.
