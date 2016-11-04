@@ -111,7 +111,7 @@ type GenericType struct {
 }
 
 // NewGenericType returns a new generic type.
-func NewGenericType(name string, params []*TypeName) *GenericType {
+func NewGenericType(name string, params ...*TypeName) *GenericType {
 	return &GenericType{instances: nil, name: name, params: params}
 }
 

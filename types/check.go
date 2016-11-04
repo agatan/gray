@@ -47,7 +47,7 @@ func (c *Checker) checkType(s *Scope, t ast.Type) (Type, error) {
 			retty = r
 		} else {
 			// Result type is Unit.
-			retty = BuiltinTypes[Unit]
+			retty = BasicTypes[Unit]
 		}
 		return NewSignature(nil, NewVars(vars...), retty), nil
 	case *ast.InstType:
@@ -95,6 +95,30 @@ func (c *Checker) isSameType(lhs, rhs Type) bool {
 			}
 		}
 		return c.isSameType(lhs.Result(), rhs.Result())
+	case *GenericType:
+		rhs, ok := rhs.(*GenericType)
+		if !ok {
+			return false
+		}
+		// Address comparison (every same generic types should be the same object)
+		return lhs == rhs
+	case *InstType:
+		rhs, ok := rhs.(*InstType)
+		if !ok {
+			return false
+		}
+		if !c.isSameType(lhs.Base(), rhs.Base()) {
+			return false
+		}
+		if len(lhs.Args()) != len(rhs.Args()) {
+			return false
+		}
+		for i := 0; i < len(lhs.Args()); i++ {
+			if !c.isSameType(lhs.Args()[i], rhs.Args()[i]) {
+				return false
+			}
+		}
+		return true
 	default:
 		panic("unimplemented yet")
 	}

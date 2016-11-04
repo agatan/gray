@@ -21,19 +21,27 @@ func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
 	case *ast.BasicLit:
 		switch e.Kind {
 		case token.UNIT:
-			return BuiltinTypes[Unit], nil
+			return BasicTypes[Unit], nil
 		case token.BOOL:
-			return BuiltinTypes[Bool], nil
+			return BasicTypes[Bool], nil
 		case token.INT:
-			return BuiltinTypes[Int], nil
+			return BasicTypes[Int], nil
 		case token.STRING:
-			return BuiltinTypes[String], nil
+			return BasicTypes[String], nil
 		default:
 			panic("internal error: unreachable")
 		}
+	case *ast.RefExpr:
+		ty, err := c.checkExpr(s, e.Value)
+		if err != nil {
+			return nil, err
+		}
+		ref := builtinGenericTypes[refType]
+		t := ref.Instantiate([]Type{ty})
+		return t, nil
 	case *ast.BlockExpr:
 		if len(e.Stmts) == 0 {
-			return BuiltinTypes[Unit], nil
+			return BasicTypes[Unit], nil
 		}
 		blockScope := s.newChild("")
 		for _, stmt := range e.Stmts[:len(e.Stmts)-1] {
@@ -49,7 +57,7 @@ func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
 		if err := c.checkStmt(blockScope, last); err != nil {
 			return nil, err
 		}
-		return BuiltinTypes[Unit], nil
+		return BasicTypes[Unit], nil
 	default:
 		panic("unimplemented yet")
 	}

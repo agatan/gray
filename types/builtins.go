@@ -6,7 +6,7 @@ import "strings"
 
 var builtinScope *Scope
 
-var BuiltinTypes = []*Basic{
+var BasicTypes = []*Basic{
 	Invalid: {kind: Invalid, name: "invalid type"},
 
 	Unit:   {kind: Unit, name: "Unit"},
@@ -15,8 +15,29 @@ var BuiltinTypes = []*Basic{
 	String: {kind: String, name: "String"},
 }
 
-func defBuiltinTypes() {
-	for _, t := range BuiltinTypes {
+func defBasicTypes() {
+	for _, t := range BasicTypes {
+		defObject(NewTypeName(t.Name(), t))
+	}
+}
+
+type builtinType int
+
+const (
+	invalidBuiltinType builtinType = iota
+	refType
+)
+
+var builtinGenericTypes = []*GenericType{
+	invalidBuiltinType: nil,
+	refType:            NewGenericType("Ref", NewTypeName("T", nil)),
+}
+
+func defBuiltinGenericTypes() {
+	for _, t := range builtinGenericTypes {
+		if t == nil {
+			continue
+		}
 		defObject(NewTypeName(t.Name(), t))
 	}
 }
@@ -33,5 +54,6 @@ func defObject(obj Object) {
 
 func init() {
 	builtinScope = &Scope{name: "builtin"}
-	defBuiltinTypes()
+	defBasicTypes()
+	defBuiltinGenericTypes()
 }
