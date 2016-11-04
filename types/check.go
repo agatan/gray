@@ -38,9 +38,15 @@ func (c *Checker) checkType(s *Scope, t ast.Type) (Type, error) {
 			}
 			vars[i] = NewVar(p.Ident.Name, pty)
 		}
-		retty, err := c.checkType(s, t.Result)
-		if err != nil {
-			return nil, err
+		var retty Type
+		if t.Result != nil {
+			r, err := c.checkType(s, t.Result)
+			if err != nil {
+				return nil, err
+			}
+			retty = r
+		} else {
+			retty = BuiltinTypes[Unit]
 		}
 		return NewSignature(nil, NewVars(vars...), retty), nil
 	case *ast.InstType:
@@ -64,4 +70,14 @@ func (c *Checker) checkType(s *Scope, t ast.Type) (Type, error) {
 	default:
 		panic("internal error: unreachable clause")
 	}
+}
+
+// Check checks the types of given ast declarations.
+func (c *Checker) Check(ds []ast.Decl) error {
+	for _, d := range ds {
+		if err := c.checkDecl(c.scope, d); err != nil {
+			return err
+		}
+	}
+	return nil
 }
