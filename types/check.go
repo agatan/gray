@@ -73,6 +73,33 @@ func (c *Checker) checkType(s *Scope, t ast.Type) (Type, error) {
 	}
 }
 
+func (c *Checker) isSameType(lhs, rhs Type) bool {
+	switch lhs := lhs.(type) {
+	case *Basic:
+		rhs, ok := rhs.(*Basic)
+		if !ok {
+			return false
+		}
+		return lhs.kind == rhs.kind
+	case *Signature:
+		rhs, ok := rhs.(*Signature)
+		if !ok {
+			return false
+		}
+		if lhs.Params().Len() != rhs.Params().Len() {
+			return false
+		}
+		for i := 0; i < lhs.Params().Len(); i++ {
+			if !c.isSameType(lhs.Params().At(i).Type(), rhs.Params().At(i).Type()) {
+				return false
+			}
+		}
+		return c.isSameType(lhs.Result(), rhs.Result())
+	default:
+		panic("unimplemented yet")
+	}
+}
+
 // Check checks the types of given ast declarations.
 func (c *Checker) Check(ds []ast.Decl) (*Scope, error) {
 	for _, d := range ds {
