@@ -6,9 +6,9 @@ import (
 	"github.com/agatan/gray/token"
 )
 
-type infixOpFunc func(op string, lhs, rhs Type) (Type, error)
+type infixOpFunc func(c *Checker, op string, lhs, rhs Type) (Type, error)
 
-func opNumeric(op string, lhs, rhs Type) (Type, error) {
+func opNumeric(c *Checker, op string, lhs, rhs Type) (Type, error) {
 	lbasic, ok := lhs.(*Basic)
 	if !ok {
 		return nil, &Error{
@@ -29,7 +29,7 @@ func opNumeric(op string, lhs, rhs Type) (Type, error) {
 	}
 }
 
-func opNumOrString(op string, lhs, rhs Type) (Type, error) {
+func opNumOrString(c *Checker, op string, lhs, rhs Type) (Type, error) {
 	lbasic, ok := lhs.(*Basic)
 	if !ok {
 		return nil, &Error{
@@ -53,7 +53,7 @@ func opNumOrString(op string, lhs, rhs Type) (Type, error) {
 	}
 }
 
-func opLogical(op string, lhs, rhs Type) (Type, error) {
+func opLogical(c *Checker, op string, lhs, rhs Type) (Type, error) {
 	lbasic, ok := lhs.(*Basic)
 	if !ok {
 		return nil, &Error{
@@ -74,7 +74,7 @@ func opLogical(op string, lhs, rhs Type) (Type, error) {
 	}
 }
 
-func opComparison(op string, lhs, rhs Type) (Type, error) {
+func opComparison(c *Checker, op string, lhs, rhs Type) (Type, error) {
 	lbasic, ok := lhs.(*Basic)
 	if !ok {
 		return nil, &Error{
@@ -95,6 +95,21 @@ func opComparison(op string, lhs, rhs Type) (Type, error) {
 	}
 }
 
+func opAssign(c *Checker, op string, lhs, rhs Type) (Type, error) {
+	ref, ok := lhs.(*InstType)
+	if !ok || !c.isCompatibleType(ref.Base(), builtinGenericTypes[refType]) {
+		return nil, &Error{
+			Message: fmt.Sprintf("type mismatch: expected reference type, but got %s", ref),
+		}
+	}
+	if !c.isCompatibleType(ref.Args()[0], rhs) {
+		return nil, &Error{
+			Message: fmt.Sprintf("type mismatch: expected %s, but got %s", ref.Args()[0], rhs),
+		}
+	}
+	return BasicTypes[Unit], nil
+}
+
 var builtinOperators = map[string]infixOpFunc{
 	"-": opNumeric,
 	"*": opNumeric,
@@ -112,6 +127,8 @@ var builtinOperators = map[string]infixOpFunc{
 	"<=": opComparison,
 	">":  opComparison,
 	">=": opComparison,
+
+	":=": opAssign,
 }
 
 func (c *Checker) checkInfixExpr(s *Scope, op string, lhs, rhs Type, pos token.Position) (Type, error) {
@@ -122,7 +139,7 @@ func (c *Checker) checkInfixExpr(s *Scope, op string, lhs, rhs Type, pos token.P
 			Pos:     pos,
 		}
 	}
-	ty, err := f(op, lhs, rhs)
+	ty, err := f(c, op, lhs, rhs)
 	if err != nil {
 		err.(*Error).Pos = pos
 		return nil, err
