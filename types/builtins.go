@@ -44,6 +44,7 @@ func defBuiltinGenericTypes() {
 
 const (
 	BuiltinPrintInt = "print_int"
+	BuiltinPrintln  = "println"
 )
 
 var builtinFunctions = []struct {
@@ -51,6 +52,7 @@ var builtinFunctions = []struct {
 	sig  *Signature
 }{
 	{BuiltinPrintInt, NewSignature(nil, NewVars(NewVar("x", BasicTypes[Int])), BasicTypes[Unit])},
+	{BuiltinPrintln, NewSignature(nil, NewVars(NewVar("x", BasicTypes[String])), BasicTypes[Unit])},
 }
 
 func defBuiltinFunctions() {
