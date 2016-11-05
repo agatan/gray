@@ -20,11 +20,11 @@ def fib2(n: Int) -> Int {
 }
 
 def main() {
-    println(fib(1))
-    println(fib(3))
-    println(fib(10))
+    print_int(fib(1))
+    print_int(fib(3))
+    print_int(fib(10))
 
-    println(fib2(1))
-    println(fib2(3))
-    println(fib2(10))
+    print_int(fib2(1))
+    print_int(fib2(3))
+    print_int(fib2(10))
 }
