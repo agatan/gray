@@ -1,11 +1,11 @@
 TARGET := gray
-SRCS := $(shell find . -name "*.go")
+SRCS := $(shell find . -name "*.go") parser/parser.go.y
 
 .PHONY: all
-all: $(TARGET) parser/parser.go
+all: $(TARGET)
 
 .PHONY: run
-run: all
+run: $(TARGET)
 	./$(TARGET)
 
 .PHONY: test
@@ -16,7 +16,7 @@ test: all
 clean:
 	$(RM) $(TARGET) parser/parser.go
 
-$(TARGET): $(SRCS) parser/parser.go
+$(TARGET): $(SRCS)
 	go generate ./...
 	go build
 
