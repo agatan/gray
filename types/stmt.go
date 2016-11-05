@@ -13,7 +13,7 @@ func (c *Checker) checkStmt(s *Scope, stmt ast.Stmt) error {
 		if err != nil {
 			return err
 		}
-		if !c.isSameType(BasicTypes[Unit], ty) {
+		if !c.isCompatibleType(BasicTypes[Unit], ty) {
 			return &Error{
 				Message: fmt.Sprintf("type mismatch: expected %s, but got %s", BasicTypes[Unit], ty),
 				Pos:     stmt.Position(),
@@ -30,7 +30,7 @@ func (c *Checker) checkStmt(s *Scope, stmt ast.Stmt) error {
 			if err != nil {
 				return err
 			}
-			if !c.isSameType(ty, ety) {
+			if !c.isCompatibleType(ty, ety) {
 				return &Error{
 					Message: fmt.Sprintf("type mismatch: expected %s, but got %s", ty, ety),
 					Pos:     stmt.Value.Position(),

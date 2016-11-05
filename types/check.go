@@ -82,12 +82,6 @@ func (c *Checker) checkType(s *Scope, t ast.Type) (Type, error) {
 }
 
 func (c *Checker) isSameType(lhs, rhs Type) bool {
-	if _, ok := lhs.(*Wildcard); ok {
-		return true
-	}
-	if _, ok := rhs.(*Wildcard); ok {
-		return true
-	}
 	switch lhs := lhs.(type) {
 	case *Basic:
 		rhs, ok := rhs.(*Basic)
@@ -136,6 +130,18 @@ func (c *Checker) isSameType(lhs, rhs Type) bool {
 	default:
 		panic("internal error: unreachable")
 	}
+}
+
+func (c *Checker) compatibleType(lhs, rhs Type) (Type, bool) {
+	if c.isSameType(lhs, rhs) {
+		return lhs, true
+	}
+	return nil, false
+}
+
+func (c *Checker) isCompatibleType(lhs, rhs Type) bool {
+	_, ok := c.compatibleType(lhs, rhs)
+	return ok
 }
 
 // Check checks the types of given ast declarations.

@@ -27,14 +27,14 @@ func (c *Checker) checkDecl(s *Scope, d ast.Decl) error {
 		if err != nil {
 			return err
 		}
-		if !c.isSameType(sig.Result(), ty) {
+		if _, ok := c.compatibleType(sig.Result(), ty); !ok {
 			return &Error{
 				Message: fmt.Sprintf("type mismatch: expected %s, but got %s", sig.Result(), ty),
 				Pos:     d.Position(),
 			}
 		}
 		for _, info := range c.returnInfos {
-			if !c.isSameType(sig.Result(), info.typ) {
+			if _, ok := c.compatibleType(sig.Result(), info.typ); !ok {
 				return &Error{
 					Message: fmt.Sprintf("type mismatch: expected %s, but got %s", sig.Result(), info.typ),
 					Pos:     info.pos,

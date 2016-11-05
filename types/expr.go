@@ -45,7 +45,7 @@ func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
 			return nil, err
 		}
 		ref, ok := ty.(*InstType)
-		if !ok || !c.isSameType(ref.Base(), builtinGenericTypes[refType]) {
+		if !ok || !c.isCompatibleType(ref.Base(), builtinGenericTypes[refType]) {
 			return nil, &Error{
 				Message: fmt.Sprintf("type mismatch: expected reference type, but got %s", ty),
 				Pos:     e.Position(),
@@ -115,7 +115,7 @@ func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
 			if err != nil {
 				return nil, err
 			}
-			if !c.isSameType(sig.Params().At(i).Type(), ty) {
+			if !c.isCompatibleType(sig.Params().At(i).Type(), ty) {
 				return nil, &Error{
 					Message: fmt.Sprintf("type mismatch: expected %s, but got %s", sig.Params().At(i).Type(), ty),
 					Pos:     arg.Position(),
@@ -128,7 +128,7 @@ func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
 		if err != nil {
 			return nil, err
 		}
-		if !c.isSameType(BasicTypes[Bool], condTy) {
+		if !c.isCompatibleType(BasicTypes[Bool], condTy) {
 			return nil, &Error{
 				Message: fmt.Sprintf("type mismatch: expected %s, but got %s", BasicTypes[Bool], condTy),
 				Pos:     e.Cond.Position(),
@@ -148,13 +148,14 @@ func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
 		} else {
 			elseTy = BasicTypes[Unit]
 		}
-		if !c.isSameType(thenTy, elseTy) {
+		resTy, ok := c.compatibleType(thenTy, elseTy)
+		if !ok {
 			return nil, &Error{
 				Message: fmt.Sprintf("type mismatch: %s and %s", thenTy, elseTy),
 				Pos:     e.Position(),
 			}
 		}
-		return thenTy, nil
+		return resTy, nil
 	default:
 		panic("internal error: unreachable")
 	}
