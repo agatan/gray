@@ -172,14 +172,14 @@ func (c *Checker) isCompatibleType(lhs, rhs Type) bool {
 }
 
 // Check checks the types of given ast declarations.
-func (c *Checker) Check(ds []ast.Decl) (*Scope, error) {
+func (c *Checker) Check(ds []ast.Decl) (*Scope, *TypeMap, error) {
 	for _, d := range ds {
 		if err := c.checkDecl(c.scope, d); err != nil {
 			if e, ok := err.(*Error); ok {
 				e.Filename = c.Filename
 			}
-			return nil, err
+			return nil, nil, err
 		}
 	}
-	return c.scope, nil
+	return c.scope, c.typemap, nil
 }

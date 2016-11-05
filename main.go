@@ -17,7 +17,7 @@ func main() {
 		return
 	}
 	checker := types.NewChecker("<stdin>")
-	scope, err := checker.Check(ds)
+	scope, _, err := checker.Check(ds)
 	if err != nil {
 		panic(err)
 	}
