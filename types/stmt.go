@@ -50,6 +50,20 @@ func (c *Checker) checkStmt(s *Scope, stmt ast.Stmt) error {
 		}
 		c.addReturnInfo(ety, stmt.Position())
 		return nil
+	case *ast.WhileStmt:
+		condTy, err := c.checkExpr(s, stmt.Cond)
+		if err != nil {
+			return err
+		}
+		if !c.isCompatibleType(BasicTypes[Bool], condTy) {
+			return &Error{
+				Message: fmt.Sprintf("type mismatch: expected %s, but got %s", BasicTypes[Bool], condTy),
+				Pos:     stmt.Cond.Position(),
+			}
+		}
+		// Ignore the type of while body.
+		_, err = c.checkExpr(s, stmt.Body)
+		return err
 	default:
 		panic("unimplemented yet")
 	}
