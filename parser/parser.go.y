@@ -57,7 +57,7 @@ import (
 }
 
 %token<tok> IDENT UIDENT INT TRUE FALSE STRING
-%token<tok> DEF LET REF IF ELSE RETURN WHILE
+%token<tok> DEF LET REF IF ELSE RETURN WHILE BREAK
 %token<tok> EQEQ NEQ GE LG OROR ANDAND ASSIGN
 %token<tok> ARROW
 
@@ -170,6 +170,11 @@ stmt:
 	| WHILE expr block_expr
 	{
 		$$ = &ast.WhileStmt{Cond: $2, Body: $3}
+		$$.SetPosition($1.Position())
+	}
+	| BREAK
+	{
+		$$ = &ast.BreakStmt{}
 		$$.SetPosition($1.Position())
 	}
 

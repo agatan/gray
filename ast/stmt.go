@@ -42,4 +42,9 @@ type (
 		Cond Expr
 		Body *BlockExpr
 	}
+
+	// BreakStmt represent break statement.
+	BreakStmt struct {
+		StmtImpl
+	}
 )

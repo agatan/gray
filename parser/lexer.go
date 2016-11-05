@@ -61,6 +61,7 @@ var keywords map[string]int = map[string]int{
 	"else":   ELSE,
 	"return": RETURN,
 	"while":  WHILE,
+	"break":  BREAK,
 }
 
 func convertString(s string) (string, error) {

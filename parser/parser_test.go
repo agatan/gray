@@ -83,11 +83,12 @@ func TestReturnStmt(t *testing.T) {
 	}
 }
 
-func TestWhileStmt(t *testing.T) {
+func TestWhileAndBreakStmt(t *testing.T) {
 	l := NewLexer("test.gy", strings.NewReader(`
 	def test() {
 		while true {
 			println("HELLO")
+			break
 		}
 	}`))
 	_, err := Parse(l)
