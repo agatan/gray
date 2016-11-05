@@ -40,7 +40,10 @@ func (c *Checker) checkStmt(s *Scope, stmt ast.Stmt) error {
 		s.Insert(NewVar(stmt.Ident.Name, ety))
 		return nil
 	case *ast.ReturnStmt:
-		// TODO(agatan): Should record return types to check function return types!
+		if stmt.X == nil {
+			c.returnInfos = append(c.returnInfos, returnInfo{typ: BasicTypes[Unit], pos: stmt.Position()})
+			return nil
+		}
 		ety, err := c.checkExpr(s, stmt.X)
 		if err != nil {
 			return nil

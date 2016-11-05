@@ -48,6 +48,18 @@ func TestExpr(t *testing.T) {
 			},
 			BasicTypes[Int],
 		},
+		{
+			&ast.IfExpr{
+				Cond: &ast.BasicLit{Kind: token.BOOL},
+				Then: &ast.BlockExpr{
+					Stmts: []ast.Stmt{&ast.ReturnStmt{}},
+				},
+				Else: &ast.BlockExpr{
+					Stmts: []ast.Stmt{&ast.ExprStmt{X: &ast.BasicLit{Kind: token.INT}}},
+				},
+			},
+			BasicTypes[Int],
+		},
 	}
 
 	for i, test := range tests {
