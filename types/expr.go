@@ -79,8 +79,7 @@ func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
 			if err := c.checkStmt(blockScope, stmt); err != nil {
 				return nil, err
 			}
-			switch stmt.(type) {
-			case *ast.ReturnStmt:
+			if isBangExitStmt(stmt) {
 				isBang = true
 			}
 		}
@@ -92,8 +91,7 @@ func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
 		if err := c.checkStmt(blockScope, last); err != nil {
 			return nil, err
 		}
-		switch last.(type) {
-		case *ast.ReturnStmt:
+		if isBangExitStmt(last) {
 			isBang = true
 		}
 		if isBang {

@@ -1,0 +1,7 @@
+def break_example(n: Int) {
+    while true {
+        if n > 0 {
+            break
+        }
+    }
+}

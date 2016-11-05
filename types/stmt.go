@@ -66,7 +66,26 @@ func (c *Checker) checkStmt(s *Scope, stmt ast.Stmt) error {
 		// Ignore the type of while body.
 		_, err = c.checkExpr(s, stmt.Body)
 		return err
+	case *ast.BreakStmt:
+		if !c.isInLoop() {
+			return &Error{
+				Message: "break is not in a loop",
+				Pos:     stmt.Position(),
+			}
+		}
+		return nil
 	default:
 		panic("unimplemented yet")
+	}
+}
+
+func isBangExitStmt(s ast.Stmt) bool {
+	switch s.(type) {
+	case *ast.ReturnStmt:
+		return true
+	case *ast.BreakStmt:
+		return true
+	default:
+		return false
 	}
 }
