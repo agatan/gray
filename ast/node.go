@@ -12,7 +12,12 @@ type NodeImpl struct {
 }
 
 // ID returns the id of Node n.
-func (n *NodeImpl) ID() uint { return n.id }
+func (n *NodeImpl) ID() uint {
+	if n.id == 0 {
+		panic("internal error: Node ID is uninitialized")
+	}
+	return n.id
+}
 
 // SetID sets the id of Node n with the given id.
 func (n *NodeImpl) SetID(id uint) { n.id = id }

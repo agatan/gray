@@ -36,11 +36,12 @@ func (c *Checker) isInLoop() bool {
 }
 
 func (c *Checker) setID(n ast.Node) {
-	n.SetID(c.freshID)
 	c.freshID++
+	n.SetID(c.freshID)
 }
 
 func (c *Checker) checkType(s *Scope, t ast.Type) (Type, error) {
+	c.setID(t)
 	switch t := t.(type) {
 	case *ast.TypeIdent:
 		obj := s.LookupParent(t.Name)

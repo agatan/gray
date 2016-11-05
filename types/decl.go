@@ -7,6 +7,7 @@ import (
 )
 
 func (c *Checker) checkDecl(s *Scope, d ast.Decl) error {
+	c.setID(d)
 	switch d := d.(type) {
 	case *ast.FuncDecl:
 		fty, err := c.checkType(s, d.Type)

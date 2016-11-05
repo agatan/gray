@@ -7,6 +7,7 @@ import (
 )
 
 func (c *Checker) checkStmt(s *Scope, stmt ast.Stmt) error {
+	c.setID(stmt)
 	switch stmt := stmt.(type) {
 	case *ast.ExprStmt:
 		ty, err := c.checkExpr(s, stmt.X)

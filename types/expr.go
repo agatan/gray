@@ -8,6 +8,7 @@ import (
 )
 
 func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
+	c.setID(e)
 	switch e := e.(type) {
 	case *ast.Ident:
 		obj := s.LookupParent(e.Name)
