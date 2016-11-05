@@ -168,16 +168,3 @@ func (i *InstType) Base() *GenericType { return i.base }
 
 // Args returns args of InstType i.
 func (i *InstType) Args() []Type { return i.args }
-
-// Wildcard represents wildcard type (e.g. early return statement or break)
-type Wildcard struct{}
-
-func (*Wildcard) typ()           {}
-func (*Wildcard) String() string { return "!" }
-
-var wildcard = Wildcard{}
-
-// NewWildcard returns a wildcard type instance.
-func NewWildcard() *Wildcard {
-	return &wildcard
-}
