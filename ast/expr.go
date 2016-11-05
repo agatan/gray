@@ -5,12 +5,14 @@ import "github.com/agatan/gray/token"
 // Expr is an interface of expressions
 type Expr interface {
 	token.Pos
+	Node
 	expr()
 }
 
 // ExprImpl provides default implementations for Expr.
 type ExprImpl struct {
 	token.PosImpl
+	NodeImpl
 }
 
 func (*ExprImpl) expr() {}

@@ -5,12 +5,14 @@ import "github.com/agatan/gray/token"
 // Stmt is an interface of statements
 type Stmt interface {
 	token.Pos
+	Node
 	stmt()
 }
 
 // StmtImpl provide default implementation for Stmt.
 type StmtImpl struct {
 	token.PosImpl
+	NodeImpl
 }
 
 func (*StmtImpl) stmt() {}

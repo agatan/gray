@@ -5,12 +5,14 @@ import "github.com/agatan/gray/token"
 // Type is an interface of types
 type Type interface {
 	token.Pos
+	Node
 	types()
 }
 
 // TypeImpl provides default implementations for Type.
 type TypeImpl struct {
 	token.PosImpl
+	NodeImpl
 }
 
 func (*TypeImpl) types() {}
