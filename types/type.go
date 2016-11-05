@@ -168,3 +168,14 @@ func (i *InstType) Base() *GenericType { return i.base }
 
 // Args returns args of InstType i.
 func (i *InstType) Args() []Type { return i.args }
+
+// BangType represents a bang type. (e.g. break, return, ...)
+type BangType struct{}
+
+func (*BangType) typ()           {}
+func (*BangType) String() string { return "!" }
+
+var bangType BangType
+
+// NewBangType returns a bang type instance.
+func NewBangType() *BangType { return &bangType }
