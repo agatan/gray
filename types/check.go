@@ -12,6 +12,7 @@ type Checker struct {
 	scope       *Scope
 	returnInfos []returnInfo // returnTypes is a set of return types in the current function body.
 	loopDepth   int          // loopDepth is current depth of loop statements.
+	freshID     uint         // lastID is the last used AST ID.
 }
 
 // NewChecker creates a Checker with given file name.
@@ -32,6 +33,11 @@ func (c *Checker) exitLoop() {
 
 func (c *Checker) isInLoop() bool {
 	return c.loopDepth > 0
+}
+
+func (c *Checker) setID(n ast.Node) {
+	n.SetID(c.freshID)
+	c.freshID++
 }
 
 func (c *Checker) checkType(s *Scope, t ast.Type) (Type, error) {
