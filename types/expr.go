@@ -74,9 +74,14 @@ func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
 			return BasicTypes[Unit], nil
 		}
 		blockScope := s.newChild("")
+		isBang := false
 		for _, stmt := range e.Stmts[:len(e.Stmts)-1] {
 			if err := c.checkStmt(blockScope, stmt); err != nil {
 				return nil, err
+			}
+			switch stmt.(type) {
+			case *ast.ReturnStmt:
+				isBang = true
 			}
 		}
 		last := e.Stmts[len(e.Stmts)-1]
@@ -86,6 +91,13 @@ func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
 		}
 		if err := c.checkStmt(blockScope, last); err != nil {
 			return nil, err
+		}
+		switch last.(type) {
+		case *ast.ReturnStmt:
+			isBang = true
+		}
+		if isBang {
+			return NewBangType(), nil
 		}
 		return BasicTypes[Unit], nil
 	case *ast.CallExpr:

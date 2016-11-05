@@ -133,6 +133,12 @@ func (c *Checker) isSameType(lhs, rhs Type) bool {
 }
 
 func (c *Checker) compatibleType(lhs, rhs Type) (Type, bool) {
+	if _, ok := lhs.(*BangType); ok {
+		return rhs, true
+	}
+	if _, ok := rhs.(*BangType); ok {
+		return lhs, true
+	}
 	if c.isSameType(lhs, rhs) {
 		return lhs, true
 	}
