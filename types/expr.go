@@ -8,6 +8,15 @@ import (
 )
 
 func (c *Checker) checkExpr(s *Scope, e ast.Expr) (Type, error) {
+	ty, err := c.inferAndCheckExpr(s, e)
+	if err != nil {
+		return nil, err
+	}
+	c.typemap.Record(e, ty)
+	return ty, nil
+}
+
+func (c *Checker) inferAndCheckExpr(s *Scope, e ast.Expr) (Type, error) {
 	c.setID(e)
 	switch e := e.(type) {
 	case *ast.Ident:

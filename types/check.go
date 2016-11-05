@@ -13,11 +13,16 @@ type Checker struct {
 	returnInfos []returnInfo // returnTypes is a set of return types in the current function body.
 	loopDepth   int          // loopDepth is current depth of loop statements.
 	freshID     uint         // lastID is the last used AST ID.
+	typemap     *TypeMap     // typemap holds types of AST Nodes.
 }
 
 // NewChecker creates a Checker with given file name.
 func NewChecker(filename string) *Checker {
-	return &Checker{Filename: filename, scope: NewScope(filename)}
+	return &Checker{
+		Filename: filename,
+		scope:    NewScope(filename),
+		typemap:  NewTypeMap(),
+	}
 }
 
 func (c *Checker) enterLoop() {
