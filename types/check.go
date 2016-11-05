@@ -11,11 +11,27 @@ type Checker struct {
 	Filename    string
 	scope       *Scope
 	returnInfos []returnInfo // returnTypes is a set of return types in the current function body.
+	loopDepth   int          // loopDepth is current depth of loop statements.
 }
 
 // NewChecker creates a Checker with given file name.
 func NewChecker(filename string) *Checker {
 	return &Checker{Filename: filename, scope: NewScope(filename)}
+}
+
+func (c *Checker) enterLoop() {
+	c.loopDepth++
+}
+
+func (c *Checker) exitLoop() {
+	if c.loopDepth == 0 {
+		panic("internal error: not in loop state")
+	}
+	c.loopDepth--
+}
+
+func (c *Checker) isInLoop() bool {
+	return c.loopDepth > 0
 }
 
 func (c *Checker) checkType(s *Scope, t ast.Type) (Type, error) {

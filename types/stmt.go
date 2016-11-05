@@ -51,6 +51,8 @@ func (c *Checker) checkStmt(s *Scope, stmt ast.Stmt) error {
 		c.addReturnInfo(ety, stmt.Position())
 		return nil
 	case *ast.WhileStmt:
+		c.enterLoop()
+		defer c.exitLoop()
 		condTy, err := c.checkExpr(s, stmt.Cond)
 		if err != nil {
 			return err
