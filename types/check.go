@@ -4,14 +4,7 @@ import (
 	"fmt"
 
 	"github.com/agatan/gray/ast"
-	"github.com/agatan/gray/token"
 )
-
-// returnInfo holds return statements' informations.
-type returnInfo struct {
-	typ Type
-	pos token.Position
-}
 
 // Checker contains a type checking state.
 type Checker struct {

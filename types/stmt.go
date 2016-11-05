@@ -41,14 +41,14 @@ func (c *Checker) checkStmt(s *Scope, stmt ast.Stmt) error {
 		return nil
 	case *ast.ReturnStmt:
 		if stmt.X == nil {
-			c.returnInfos = append(c.returnInfos, returnInfo{typ: BasicTypes[Unit], pos: stmt.Position()})
+			c.addReturnInfo(BasicTypes[Unit], stmt.Position())
 			return nil
 		}
 		ety, err := c.checkExpr(s, stmt.X)
 		if err != nil {
 			return nil
 		}
-		c.returnInfos = append(c.returnInfos, returnInfo{typ: ety, pos: stmt.Position()})
+		c.addReturnInfo(ety, stmt.Position())
 		return nil
 	default:
 		panic("unimplemented yet")
