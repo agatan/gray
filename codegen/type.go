@@ -14,7 +14,7 @@ func (c *Context) defBasicTypes() {
 	str.StructSetBody([]llvm.Type{
 		c.llcontext.Int32Type(),                     // length
 		llvm.PointerType(c.llcontext.Int8Type(), 0), // pointer to characters
-	}, true)
+	}, false)
 	c.basicTypes = []llvm.Type{
 		token.UNIT:   c.llcontext.VoidType(),
 		token.INT:    c.llcontext.Int32Type(),

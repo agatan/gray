@@ -24,7 +24,7 @@ func (c *Context) genExpr(e ast.Expr) (llvm.Value, error) {
 		case token.STRING:
 			sptr := c.llbuilder.CreateGlobalStringPtr(e.Lit, fmt.Sprintf("str.%d", e.ID()))
 			length := llvm.ConstInt(c.intType(), uint64(len(e.Lit)), false)
-			return llvm.ConstStruct([]llvm.Value{length, sptr}, true), nil
+			return llvm.ConstStruct([]llvm.Value{length, sptr}, false), nil
 		default:
 			panic(fmt.Sprintf("unreachable %#v", e))
 		}
