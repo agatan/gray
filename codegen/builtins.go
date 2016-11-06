@@ -11,17 +11,13 @@ func (c *Context) unitValue() llvm.Value {
 	return llvm.ConstInt(c.unitType(), 0, false)
 }
 
-func (c *Context) defBuiltinFunctions() error {
+func (c *Context) defBuiltinFunctions() {
 	for _, t := range types.BuiltinFunctions {
 		name := t.Name
 		sig := t.Sig
-		fty, err := c.sigType(sig)
-		if err != nil {
-			return err
-		}
+		fty := c.sigType(sig)
 		llvm.AddFunction(c.llmodule, name, fty)
 	}
-	return nil
 }
 
 var errNoGrayMain = errors.New("'gray.main' does not exist")

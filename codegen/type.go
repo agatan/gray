@@ -39,34 +39,27 @@ func (c *Context) stringType() llvm.Type {
 	return c.basicTypes[token.STRING]
 }
 
-func (c *Context) sigType(sig *types.Signature) (t llvm.Type, err error) {
+func (c *Context) sigType(sig *types.Signature) llvm.Type {
 	params := make([]llvm.Type, sig.Params().Len())
 	for i := 0; i < sig.Params().Len(); i++ {
-		param, err := c.genType(sig.Params().At(i).Type())
-		if err != nil {
-			return t, err
-		}
-		params[i] = param
+		params[i] = c.genType(sig.Params().At(i).Type())
 	}
-	result, err := c.genType(sig.Result())
-	if err != nil {
-		return t, err
-	}
-	return llvm.FunctionType(result, params, false), nil
+	result := c.genType(sig.Result())
+	return llvm.FunctionType(result, params, false)
 }
 
-func (c *Context) genType(typ types.Type) (llvm.Type, error) {
+func (c *Context) genType(typ types.Type) llvm.Type {
 	switch typ := typ.(type) {
 	case *types.Basic:
 		switch typ.Kind() {
 		case types.Unit:
-			return c.unitType(), nil
+			return c.unitType()
 		case types.Bool:
-			return c.boolType(), nil
+			return c.boolType()
 		case types.Int:
-			return c.intType(), nil
+			return c.intType()
 		case types.String:
-			return c.stringType(), nil
+			return c.stringType()
 		default:
 			panic("internal error: unreachable")
 		}

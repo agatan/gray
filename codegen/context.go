@@ -56,9 +56,7 @@ func NewContext(modname string, toplevelScope *types.Scope, typemap *types.TypeM
 		valuemap: NewValueMap(nil),
 	}
 	ctx.defBasicTypes()
-	if err := ctx.defBuiltinFunctions(); err != nil {
-		return nil, err
-	}
+	ctx.defBuiltinFunctions()
 	return ctx, nil
 }
 
@@ -69,9 +67,7 @@ func (c *Context) Dispose() {
 
 // Generate generates llvm IRs from ast.Decls.
 func (c *Context) Generate(ds []ast.Decl) (llvm.Module, error) {
-	if err := c.forwardDecls(c.toplevelScope, ds); err != nil {
-		return c.llmodule, err
-	}
+	c.forwardDecls(c.toplevelScope, ds)
 	for _, d := range ds {
 		if err := c.genDecl(d); err != nil {
 			return c.llmodule, err

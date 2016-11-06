@@ -54,8 +54,6 @@ func (c *Context) genExpr(e ast.Expr) llvm.Value {
 		}
 	case *ast.ParenExpr:
 		return c.genExpr(e.X)
-	case *ast.CallExpr:
-		return c.genCallExpr(e)
 	case *ast.BlockExpr:
 		if len(e.Stmts) == 0 {
 			return c.unitValue()
@@ -69,6 +67,35 @@ func (c *Context) genExpr(e ast.Expr) llvm.Value {
 		}
 		c.genStmt(last)
 		return c.unitValue()
+	case *ast.CallExpr:
+		return c.genCallExpr(e)
+	case *ast.IfExpr:
+		cond := c.genExpr(e.Cond)
+		cmp := c.llbuilder.CreateICmp(llvm.IntNE, cond, llvm.ConstInt(c.boolType(), 0, false), "ifcond")
+		parentb := c.llbuilder.GetInsertBlock().Parent()
+		thenb := llvm.AddBasicBlock(parentb, "then")
+		elseb := llvm.AddBasicBlock(parentb, "else")
+		ifcontb := llvm.AddBasicBlock(parentb, "ifcont")
+		c.llbuilder.CreateCondBr(cmp, thenb, elseb)
+		// generate then block
+		c.llbuilder.SetInsertPointAtEnd(thenb)
+		thenv := c.genExpr(e.Then)
+		c.llbuilder.CreateBr(ifcontb)
+		thenb = c.llbuilder.GetInsertBlock() // the end block may be changed in generating Then value.
+		// generate else block
+		c.llbuilder.SetInsertPointAtEnd(elseb)
+		var elsev llvm.Value
+		if e.Else == nil {
+			elsev = c.unitValue()
+		} else {
+			elsev = c.genExpr(e.Else)
+		}
+		c.llbuilder.CreateBr(ifcontb)
+		elseb = c.llbuilder.GetInsertBlock()
+		c.llbuilder.SetInsertPointAtEnd(ifcontb)
+		phi := c.llbuilder.CreatePHI(c.genType(c.typemap.Type(e)), "iftmp")
+		phi.AddIncoming([]llvm.Value{thenv, elsev}, []llvm.BasicBlock{thenb, elseb})
+		return phi
 	default:
 		panic(fmt.Sprintf("unimplemented %T", e))
 	}

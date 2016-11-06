@@ -1,0 +1,12 @@
+def example_if(b: Bool) -> Int {
+    if b {
+        1
+    } else {
+        0
+    }
+}
+
+def main() {
+    print_int(example_if(true))
+    print_int(example_if(false))
+}
