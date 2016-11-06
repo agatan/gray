@@ -30,3 +30,8 @@ func NewContext() (*Context, error) {
 		lltargetData:    tm.CreateTargetData(),
 	}, nil
 }
+
+// Dispose is a destructor method for Context.
+func (c *Context) Dispose() {
+	c.llcontext.Dispose()
+}
