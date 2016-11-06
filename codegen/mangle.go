@@ -1,5 +1,11 @@
 package codegen
 
+import "fmt"
+
 func (c *Context) mangle(s string) string {
-	return "gray." + s
+	return fmt.Sprintf("%s.%s", c.moduleName, s)
+}
+
+func (c *Context) mainFuncName() string {
+	return c.moduleName + ".main"
 }

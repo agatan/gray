@@ -27,7 +27,7 @@ func (c *Context) defBuiltinFunctions() error {
 var errNoGrayMain = errors.New("'gray.main' does not exist")
 
 func (c *Context) defGrayMain() error {
-	v := c.llmodule.NamedFunction("gray.main")
+	v := c.llmodule.NamedFunction(c.mainFuncName())
 	if v.IsNil() || v.IsNull() {
 		return errNoGrayMain
 	}

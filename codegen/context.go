@@ -11,6 +11,8 @@ import (
 
 // Context represent a context of code generation.
 type Context struct {
+	moduleName string
+
 	llcontext       llvm.Context
 	llbuilder       llvm.Builder
 	llmodule        llvm.Module
@@ -39,6 +41,7 @@ func NewContext(modname string, toplevelScope *types.Scope, typemap *types.TypeM
 	}
 	tm := target.CreateTargetMachine(triple, "", "", llvm.CodeGenLevelNone, llvm.RelocDefault, llvm.CodeModelDefault)
 	ctx := &Context{
+		moduleName:      modname,
 		llcontext:       llvm.GlobalContext(),
 		llbuilder:       llvm.NewBuilder(),
 		llmodule:        llvm.GlobalContext().NewModule(modname),
