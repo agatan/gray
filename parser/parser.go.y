@@ -211,9 +211,9 @@ expr:
 	{
 		$$ = $1
 	}
-	| REF expr
+	| REF '(' expr ')'
 	{
-		$$ = &ast.RefExpr{Value: $2}
+		$$ = &ast.RefExpr{Value: $3}
 		$$.SetPosition($1.Position())
 	}
 	| '@' expr %prec UNARY

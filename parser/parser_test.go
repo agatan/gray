@@ -21,8 +21,8 @@ func TestExpr(t *testing.T) {
 		{" (f)(1, 2,) "},
 		{" 1 - 2 "},
 		{" 1 > 3 == false "},
-		{" ref 1 "},
-		{" ref ref 1 "},
+		{" ref(1) "},
+		{" ref(ref(1))"},
 		{" x := 1 + 2 "},
 		{" @x "},
 	}
