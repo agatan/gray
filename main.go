@@ -29,9 +29,15 @@ func main() {
 	} else {
 		fmt.Println(string(bs))
 	}
-	ctx, err := codegen.NewContext()
+	ctx, err := codegen.NewContext("<stdin>", scope)
 	if err != nil {
 		panic(err)
 	}
 	defer ctx.Dispose()
+
+	mod, err := ctx.Generate(ds)
+	if err != nil {
+		panic(err)
+	}
+	mod.Dump()
 }

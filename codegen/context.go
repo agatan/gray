@@ -1,18 +1,26 @@
 package codegen
 
-import "llvm.org/llvm/bindings/go/llvm"
+import (
+	"github.com/agatan/gray/ast"
+	"github.com/agatan/gray/types"
+
+	"llvm.org/llvm/bindings/go/llvm"
+)
 
 // Context represent a context of code generation.
 type Context struct {
 	llcontext       llvm.Context
 	llbuilder       llvm.Builder
+	llmodule        llvm.Module
 	lltarget        llvm.Target
 	lltargetMachine llvm.TargetMachine
 	lltargetData    llvm.TargetData
+
+	toplevelScope *types.Scope
 }
 
 // NewContext returns a new Context instance.
-func NewContext() (*Context, error) {
+func NewContext(modname string, toplevelScope *types.Scope) (*Context, error) {
 	if err := llvm.InitializeNativeTarget(); err != nil {
 		return nil, err
 	}
@@ -25,13 +33,24 @@ func NewContext() (*Context, error) {
 	return &Context{
 		llcontext:       llvm.GlobalContext(),
 		llbuilder:       llvm.NewBuilder(),
+		llmodule:        llvm.GlobalContext().NewModule(modname),
 		lltarget:        target,
 		lltargetMachine: tm,
 		lltargetData:    tm.CreateTargetData(),
+
+		toplevelScope: toplevelScope,
 	}, nil
 }
 
 // Dispose is a destructor method for Context.
 func (c *Context) Dispose() {
 	c.llcontext.Dispose()
+}
+
+// Generate generates llvm IRs from ast.Decls.
+func (c *Context) Generate(ds []ast.Decl) (llvm.Module, error) {
+	if err := c.forwardDecls(c.toplevelScope, ds); err != nil {
+		return c.llmodule, err
+	}
+	return c.llmodule, nil
 }

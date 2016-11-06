@@ -29,6 +29,22 @@ func (c *Context) stringType() llvm.Type {
 	return str
 }
 
+func (c *Context) sigType(sig *types.Signature) (t llvm.Type, err error) {
+	params := make([]llvm.Type, sig.Params().Len())
+	for i := 0; i < sig.Params().Len(); i++ {
+		param, err := c.genType(sig.Params().At(i).Type())
+		if err != nil {
+			return t, err
+		}
+		params[i] = param
+	}
+	result, err := c.genType(sig.Result())
+	if err != nil {
+		return t, err
+	}
+	return llvm.FunctionType(result, params, false), nil
+}
+
 func (c *Context) genType(typ types.Type) (llvm.Type, error) {
 	switch typ := typ.(type) {
 	case *types.Basic:
@@ -44,6 +60,8 @@ func (c *Context) genType(typ types.Type) (llvm.Type, error) {
 		default:
 			panic("internal error: unreachable")
 		}
+	case *types.Signature:
+		return c.sigType(typ)
 	default:
 		panic(fmt.Sprintf("unimplemented yet: %T", typ))
 	}
