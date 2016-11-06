@@ -32,6 +32,8 @@ func (c *Context) genCallExpr(e *ast.CallExpr) llvm.Value {
 
 func (c *Context) genExpr(e ast.Expr) llvm.Value {
 	switch e := e.(type) {
+	case *ast.Ident:
+		return c.valuemap.LookupParent(e.Name)
 	case *ast.BasicLit:
 		switch e.Kind {
 		case token.UNIT:
@@ -50,8 +52,8 @@ func (c *Context) genExpr(e ast.Expr) llvm.Value {
 		default:
 			panic(fmt.Sprintf("unreachable %#v", e))
 		}
-	case *ast.Ident:
-		return c.valuemap.LookupParent(e.Name)
+	case *ast.ParenExpr:
+		return c.genExpr(e.X)
 	case *ast.CallExpr:
 		return c.genCallExpr(e)
 	case *ast.BlockExpr:
