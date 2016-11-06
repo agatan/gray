@@ -58,5 +58,10 @@ func (c *Context) Generate(ds []ast.Decl) (llvm.Module, error) {
 	if err := c.forwardDecls(c.toplevelScope, ds); err != nil {
 		return c.llmodule, err
 	}
+	for _, d := range ds {
+		if err := c.genDecl(d); err != nil {
+			return c.llmodule, err
+		}
+	}
 	return c.llmodule, nil
 }
