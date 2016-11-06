@@ -29,6 +29,9 @@ func (c *Context) genExpr(e ast.Expr) (llvm.Value, error) {
 			panic(fmt.Sprintf("unreachable %#v", e))
 		}
 	case *ast.BlockExpr:
+		if len(e.Stmts) == 0 {
+			return c.unitValue(), nil
+		}
 		if !e.IsExpr {
 			panic("statement block is unimplemented yet")
 		}

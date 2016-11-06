@@ -16,7 +16,7 @@ func (c *Context) defBasicTypes() {
 		llvm.PointerType(c.llcontext.Int8Type(), 0), // pointer to characters
 	}, false)
 	c.basicTypes = []llvm.Type{
-		token.UNIT:   c.llcontext.VoidType(),
+		token.UNIT:   c.llcontext.Int1Type(),
 		token.INT:    c.llcontext.Int32Type(),
 		token.BOOL:   c.llcontext.Int1Type(),
 		token.STRING: str,

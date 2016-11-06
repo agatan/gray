@@ -12,3 +12,6 @@ def int_literal() -> Int {
 def string_literal() -> String {
     "string\n\"\t"
 }
+
+def main() {
+}

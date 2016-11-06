@@ -17,7 +17,7 @@ func (c *Context) forwardDecl(s *types.Scope, d ast.Decl) error {
 		if err != nil {
 			return err
 		}
-		llvm.AddFunction(c.llmodule, f.Name(), fty)
+		llvm.AddFunction(c.llmodule, "gray."+f.Name(), fty)
 		return nil
 	default:
 		panic(fmt.Sprintf("unreachable %T", d))

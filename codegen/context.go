@@ -77,6 +77,10 @@ func (c *Context) Generate(ds []ast.Decl) (llvm.Module, error) {
 // EmitObject generates compiled object file for given AST.
 func (c *Context) EmitObject(outname string, ds []ast.Decl) error {
 	mod, err := c.Generate(ds)
+	err = c.defGrayMain()
+	if err != nil {
+		return err
+	}
 	membuf, err := c.lltargetMachine.EmitToMemoryBuffer(mod, llvm.ObjectFile)
 	if err != nil {
 		return err
