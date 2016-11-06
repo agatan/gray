@@ -1,0 +1,4 @@
+def argument(x: Int) {
+}
+
+def main() {}
