@@ -31,7 +31,7 @@ func NewContext(modname string, toplevelScope *types.Scope, typemap *types.TypeM
 		return nil, err
 	}
 	tm := target.CreateTargetMachine(triple, "", "", llvm.CodeGenLevelNone, llvm.RelocDefault, llvm.CodeModelDefault)
-	return &Context{
+	ctx := &Context{
 		llcontext:       llvm.GlobalContext(),
 		llbuilder:       llvm.NewBuilder(),
 		llmodule:        llvm.GlobalContext().NewModule(modname),
@@ -41,7 +41,11 @@ func NewContext(modname string, toplevelScope *types.Scope, typemap *types.TypeM
 
 		toplevelScope: toplevelScope,
 		typemap:       typemap,
-	}, nil
+	}
+	if err := ctx.defBuiltinFunctions(); err != nil {
+		return nil, err
+	}
+	return ctx, nil
 }
 
 // Dispose is a destructor method for Context.

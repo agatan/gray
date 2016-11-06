@@ -47,17 +47,17 @@ const (
 	BuiltinPrintln  = "println"
 )
 
-var builtinFunctions = []struct {
-	name string
-	sig  *Signature
+var BuiltinFunctions = []struct {
+	Name string
+	Sig  *Signature
 }{
 	{BuiltinPrintInt, NewSignature(nil, NewVars(NewVar("x", BasicTypes[Int])), BasicTypes[Unit])},
 	{BuiltinPrintln, NewSignature(nil, NewVars(NewVar("x", BasicTypes[String])), BasicTypes[Unit])},
 }
 
 func defBuiltinFunctions() {
-	for _, t := range builtinFunctions {
-		defObject(NewFunc(t.name, t.sig))
+	for _, t := range BuiltinFunctions {
+		defObject(NewFunc(t.Name, t.Sig))
 	}
 }
 
