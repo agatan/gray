@@ -19,10 +19,7 @@ func (c *Context) genDecl(d ast.Decl) error {
 		}
 		bb := llvm.AddBasicBlock(f, "entry")
 		c.llbuilder.SetInsertPointAtEnd(bb)
-		v, err := c.genExpr(d.Body)
-		if err != nil {
-			return err
-		}
+		v := c.genExpr(d.Body)
 		c.llbuilder.CreateRet(v)
 		return nil
 	default:

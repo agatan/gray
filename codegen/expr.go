@@ -25,42 +25,38 @@ func (c *Context) genCallExpr(e *ast.CallExpr) llvm.Value {
 	}
 	args := make([]llvm.Value, len(e.Args))
 	for i, arg := range e.Args {
-		v, err := c.genExpr(arg)
-		if err != nil {
-			panic(err)
-		}
-		args[i] = v
+		args[i] = c.genExpr(arg)
 	}
 	return c.llbuilder.CreateCall(fvalue, args, "calltmp")
 }
 
-func (c *Context) genExpr(e ast.Expr) (llvm.Value, error) {
+func (c *Context) genExpr(e ast.Expr) llvm.Value {
 	switch e := e.(type) {
 	case *ast.BasicLit:
 		switch e.Kind {
 		case token.UNIT:
-			return llvm.ConstInt(c.unitType(), 0, false), nil
+			return llvm.ConstInt(c.unitType(), 0, false)
 		case token.BOOL:
 			if e.Lit == "true" {
-				return llvm.ConstInt(c.boolType(), 1, false), nil
+				return llvm.ConstInt(c.boolType(), 1, false)
 			}
-			return llvm.ConstInt(c.boolType(), 0, false), nil
+			return llvm.ConstInt(c.boolType(), 0, false)
 		case token.INT:
-			return llvm.ConstIntFromString(c.intType(), e.Lit, 10), nil
+			return llvm.ConstIntFromString(c.intType(), e.Lit, 10)
 		case token.STRING:
 			sptr := c.llbuilder.CreateGlobalStringPtr(e.Lit, fmt.Sprintf("str.%d", e.ID()))
 			length := llvm.ConstInt(c.intType(), uint64(len(e.Lit)), false)
-			return llvm.ConstStruct([]llvm.Value{length, sptr}, false), nil
+			return llvm.ConstStruct([]llvm.Value{length, sptr}, false)
 		default:
 			panic(fmt.Sprintf("unreachable %#v", e))
 		}
 	case *ast.Ident:
-		return c.valuemap.LookupParent(e.Name), nil
+		return c.valuemap.LookupParent(e.Name)
 	case *ast.CallExpr:
-		return c.genCallExpr(e), nil
+		return c.genCallExpr(e)
 	case *ast.BlockExpr:
 		if len(e.Stmts) == 0 {
-			return c.unitValue(), nil
+			return c.unitValue()
 		}
 		if !e.IsExpr {
 			panic("statement block is unimplemented yet")
