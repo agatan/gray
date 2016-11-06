@@ -3,30 +3,40 @@ package codegen
 import (
 	"fmt"
 
+	"github.com/agatan/gray/token"
 	"github.com/agatan/gray/types"
 	"llvm.org/llvm/bindings/go/llvm"
 )
 
-func (c *Context) intType() llvm.Type {
-	return c.llcontext.Int32Type()
-}
-
-func (c *Context) boolType() llvm.Type {
-	return c.llcontext.Int1Type()
-}
-
-func (c *Context) unitType() llvm.Type {
-	return c.llcontext.VoidType()
-}
-
-func (c *Context) stringType() llvm.Type {
+func (c *Context) defBasicTypes() {
 	// string representation is a pair of length and pointer.
 	str := c.llcontext.StructCreateNamed("string")
 	str.StructSetBody([]llvm.Type{
-		c.intType(),                                 // length
+		c.llcontext.Int32Type(),                     // length
 		llvm.PointerType(c.llcontext.Int8Type(), 0), // pointer to characters
 	}, true)
-	return str
+	c.basicTypes = []llvm.Type{
+		token.UNIT:   c.llcontext.VoidType(),
+		token.INT:    c.llcontext.Int32Type(),
+		token.BOOL:   c.llcontext.Int1Type(),
+		token.STRING: str,
+	}
+}
+
+func (c *Context) intType() llvm.Type {
+	return c.basicTypes[token.INT]
+}
+
+func (c *Context) boolType() llvm.Type {
+	return c.basicTypes[token.BOOL]
+}
+
+func (c *Context) unitType() llvm.Type {
+	return c.basicTypes[token.UNIT]
+}
+
+func (c *Context) stringType() llvm.Type {
+	return c.basicTypes[token.STRING]
 }
 
 func (c *Context) sigType(sig *types.Signature) (t llvm.Type, err error) {

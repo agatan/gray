@@ -18,6 +18,8 @@ type Context struct {
 
 	toplevelScope *types.Scope
 	typemap       *types.TypeMap
+
+	basicTypes []llvm.Type
 }
 
 // NewContext returns a new Context instance.
@@ -42,6 +44,7 @@ func NewContext(modname string, toplevelScope *types.Scope, typemap *types.TypeM
 		toplevelScope: toplevelScope,
 		typemap:       typemap,
 	}
+	ctx.defBasicTypes()
 	if err := ctx.defBuiltinFunctions(); err != nil {
 		return nil, err
 	}
