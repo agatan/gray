@@ -30,6 +30,18 @@ func (c *Context) genCallExpr(e *ast.CallExpr) llvm.Value {
 	return c.llbuilder.CreateCall(fvalue, args, "calltmp")
 }
 
+func (c *Context) genInfixExpr(e *ast.InfixExpr) llvm.Value {
+	lhs := c.genExpr(e.LHS)
+	rhs := c.genExpr(e.RHS)
+	switch e.Operator {
+	case ":=":
+		c.llbuilder.CreateStore(rhs, lhs)
+		return c.unitValue()
+	default:
+		panic("unimplemented yet: " + e.Operator)
+	}
+}
+
 func (c *Context) genExpr(e ast.Expr) llvm.Value {
 	switch e := e.(type) {
 	case *ast.Ident:
@@ -61,6 +73,8 @@ func (c *Context) genExpr(e ast.Expr) llvm.Value {
 	case *ast.DerefExpr:
 		ref := c.genExpr(e.Ref)
 		return c.llbuilder.CreateLoad(ref, "dereftmp")
+	case *ast.InfixExpr:
+		return c.genInfixExpr(e)
 	case *ast.ParenExpr:
 		return c.genExpr(e.X)
 	case *ast.BlockExpr:
