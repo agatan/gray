@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/agatan/gray/codegen"
 	"github.com/agatan/gray/parser"
@@ -12,10 +13,17 @@ import (
 )
 
 var output string
+var dumpIR bool
 
 func init() {
 	flag.StringVar(&output, "o", "", "output file name")
+	flag.BoolVar(&dumpIR, "dump", false, "dump LLVM IR")
 	flag.Parse()
+}
+
+func moduleName(filename string) string {
+	name := strings.Replace(filename, "/", ".", -1)
+	return name[:len(name)-3]
 }
 
 func main() {
@@ -32,29 +40,39 @@ func main() {
 		panic(err)
 	}
 	defer fp.Close()
-	l := parser.NewLexer(filename, fp)
+	modname := moduleName(filename)
+	l := parser.NewLexer(modname, fp)
 	ds, err := parser.Parse(l)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	checker := types.NewChecker(filename)
+	checker := types.NewChecker(modname)
 	scope, typemap, err := checker.Check(ds)
 	if err != nil {
 		panic(err)
 	}
 	scope.Dump(os.Stdout, 0, true)
-	ctx, err := codegen.NewContext(filename, scope, typemap)
+	ctx, err := codegen.NewContext(modname, scope, typemap)
 	if err != nil {
 		panic(err)
 	}
 	defer ctx.Dispose()
 
+	llmod, err := ctx.Generate(ds)
+	if err != nil {
+		panic(err)
+	}
+	if dumpIR {
+		llmod.Dump()
+		os.Exit(0)
+	}
+
 	if output == "" {
 		base := path.Base(filename)
 		output = base[:len(base)-2] + "o"
 	}
-	err = ctx.EmitObject(output, ds)
+	err = ctx.EmitObject(output, llmod)
 	if err != nil {
 		panic(err)
 	}
