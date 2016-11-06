@@ -16,9 +16,9 @@ func (c *Context) genExpr(e ast.Expr) (llvm.Value, error) {
 			return llvm.ConstInt(c.unitType(), 0, false), nil
 		case token.BOOL:
 			if e.Lit == "true" {
-				return llvm.ConstInt(c.boolType(), 0, false), nil
+				return llvm.ConstInt(c.boolType(), 1, false), nil
 			}
-			return llvm.ConstInt(c.boolType(), 1, false), nil
+			return llvm.ConstInt(c.boolType(), 0, false), nil
 		case token.INT:
 			return llvm.ConstIntFromString(c.intType(), e.Lit, 10), nil
 		case token.STRING:
