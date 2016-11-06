@@ -2,5 +2,3 @@ gray
 parser/y.output
 parser/parser.go
 *.o
-runtime/*.a
-runtime/target/
