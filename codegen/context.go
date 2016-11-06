@@ -54,7 +54,8 @@ func NewContext(modname string, toplevelScope *types.Scope, typemap *types.TypeM
 		toplevelScope: toplevelScope,
 		typemap:       typemap,
 
-		valuemap: NewValueMap(nil),
+		valuemap:  NewValueMap(nil),
+		typenames: map[string]llvm.Type{},
 	}
 	ctx.defBasicTypes()
 	ctx.defBuiltinFunctions()

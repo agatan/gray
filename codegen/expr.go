@@ -52,6 +52,15 @@ func (c *Context) genExpr(e ast.Expr) llvm.Value {
 		default:
 			panic(fmt.Sprintf("unreachable %#v", e))
 		}
+	case *ast.RefExpr:
+		typ := c.typemap.Type(e.Value)
+		mem := c.llbuilder.CreateMalloc(c.genType(typ), "reftmp")
+		v := c.genExpr(e.Value)
+		c.llbuilder.CreateStore(v, mem)
+		return mem
+	case *ast.DerefExpr:
+		ref := c.genExpr(e.Ref)
+		return c.llbuilder.CreateLoad(ref, "dereftmp")
 	case *ast.ParenExpr:
 		return c.genExpr(e.X)
 	case *ast.BlockExpr:

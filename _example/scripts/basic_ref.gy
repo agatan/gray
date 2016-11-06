@@ -1,0 +1,4 @@
+def main() {
+    let x = ref(1)
+    print_int(@x)
+}
