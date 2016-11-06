@@ -17,10 +17,11 @@ type Context struct {
 	lltargetData    llvm.TargetData
 
 	toplevelScope *types.Scope
+	typemap       *types.TypeMap
 }
 
 // NewContext returns a new Context instance.
-func NewContext(modname string, toplevelScope *types.Scope) (*Context, error) {
+func NewContext(modname string, toplevelScope *types.Scope, typemap *types.TypeMap) (*Context, error) {
 	if err := llvm.InitializeNativeTarget(); err != nil {
 		return nil, err
 	}
@@ -39,6 +40,7 @@ func NewContext(modname string, toplevelScope *types.Scope) (*Context, error) {
 		lltargetData:    tm.CreateTargetData(),
 
 		toplevelScope: toplevelScope,
+		typemap:       typemap,
 	}, nil
 }
 
