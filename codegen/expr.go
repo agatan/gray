@@ -33,10 +33,37 @@ func (c *Context) genCallExpr(e *ast.CallExpr) llvm.Value {
 func (c *Context) genInfixExpr(e *ast.InfixExpr) llvm.Value {
 	lhs := c.genExpr(e.LHS)
 	rhs := c.genExpr(e.RHS)
+	// TODO: String concatination and float operations, comparison operations.
 	switch e.Operator {
 	case ":=":
 		c.llbuilder.CreateStore(rhs, lhs)
 		return c.unitValue()
+	case "+":
+		return c.llbuilder.CreateAdd(lhs, rhs, "addtmp")
+	case "-":
+		return c.llbuilder.CreateSub(lhs, rhs, "subtmp")
+	case "*":
+		return c.llbuilder.CreateMul(lhs, rhs, "multmp")
+	case "/":
+		return c.llbuilder.CreateSDiv(lhs, rhs, "divtmp")
+	case "%":
+		return c.llbuilder.CreateSRem(lhs, rhs, "remtmp")
+	case "&&":
+		return c.llbuilder.CreateAnd(lhs, rhs, "andtmp")
+	case "||":
+		return c.llbuilder.CreateOr(lhs, rhs, "ortmp")
+	case "==":
+		return c.llbuilder.CreateICmp(llvm.IntEQ, lhs, rhs, "eqtmp")
+	case "!=":
+		return c.llbuilder.CreateICmp(llvm.IntNE, lhs, rhs, "neqtmp")
+	case "<":
+		return c.llbuilder.CreateICmp(llvm.IntSLT, lhs, rhs, "lttmp")
+	case "<=":
+		return c.llbuilder.CreateICmp(llvm.IntSLE, lhs, rhs, "letmp")
+	case ">":
+		return c.llbuilder.CreateICmp(llvm.IntSGT, lhs, rhs, "gttmp")
+	case ">=":
+		return c.llbuilder.CreateICmp(llvm.IntSGE, lhs, rhs, "getmp")
 	default:
 		panic("unimplemented yet: " + e.Operator)
 	}
