@@ -1,6 +1,8 @@
 package codegen
 
 import (
+	"fmt"
+
 	"github.com/agatan/gray/types"
 	"llvm.org/llvm/bindings/go/llvm"
 )
@@ -21,8 +23,8 @@ func (c *Context) stringType() llvm.Type {
 	// string representation is a pair of length and pointer.
 	str := c.llcontext.StructCreateNamed("string")
 	str.StructSetBody([]llvm.Type{
-		c.intType(),                              // length
-		llvm.PointerType(c.llcontext.Int8Type()), // pointer to characters
+		c.intType(),                                 // length
+		llvm.PointerType(c.llcontext.Int8Type(), 0), // pointer to characters
 	}, true)
 	return str
 }
@@ -42,5 +44,7 @@ func (c *Context) genType(typ types.Type) (llvm.Type, error) {
 		default:
 			panic("internal error: unreachable")
 		}
+	default:
+		panic(fmt.Sprintf("unimplemented yet: %T", typ))
 	}
 }
