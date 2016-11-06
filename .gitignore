@@ -2,3 +2,4 @@ gray
 parser/y.output
 parser/parser.go
 *.o
+a.out
