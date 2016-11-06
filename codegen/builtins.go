@@ -31,8 +31,8 @@ func (c *Context) defGrayMain() error {
 	if v.IsNil() || v.IsNull() {
 		return errNoGrayMain
 	}
-	fty := llvm.FunctionType(c.unitType(), []llvm.Type{}, false)
-	f := llvm.AddFunction(c.llmodule, "__gray_main", fty)
+	fty := llvm.FunctionType(c.intType(), []llvm.Type{}, false)
+	f := llvm.AddFunction(c.llmodule, "main", fty)
 	bb := llvm.AddBasicBlock(f, "entry")
 	c.llbuilder.SetInsertPointAtEnd(bb)
 	ret := c.llbuilder.CreateCall(v, []llvm.Value{}, "calltmp")
