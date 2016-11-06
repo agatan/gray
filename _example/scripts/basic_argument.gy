@@ -1,7 +1,0 @@
-def argument(x: Int) {
-    print_int(x)
-}
-
-def main() {
-    argument(2)
-}

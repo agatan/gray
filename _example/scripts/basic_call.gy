@@ -1,7 +1,0 @@
-def internal_main() {
-    print_int(4)
-}
-
-def main() {
-    internal_main()
-}
