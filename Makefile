@@ -1,5 +1,6 @@
 TARGET := gray
 SRCS := $(shell find . -name "*.go") parser/parser.go.y
+GOFLAGS := -ldflags "-s"
 
 .PHONY: all
 all: $(TARGET)
@@ -10,7 +11,7 @@ run: $(TARGET)
 
 .PHONY: test
 test: all
-	go test ./...
+	go test $(GOFLAGS) ./...
 
 .PHONY: clean
 clean:
@@ -18,5 +19,5 @@ clean:
 
 $(TARGET): $(SRCS)
 	go generate ./...
-	go build
+	go build $(GOFLAGS)
 

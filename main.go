@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/agatan/gray/codegen"
 	"github.com/agatan/gray/parser"
 	"github.com/agatan/gray/types"
 )
@@ -28,4 +29,9 @@ func main() {
 	} else {
 		fmt.Println(string(bs))
 	}
+	ctx, err := codegen.NewContext()
+	if err != nil {
+		panic(err)
+	}
+	defer ctx.Dispose()
 }
