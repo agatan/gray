@@ -75,14 +75,14 @@ func (c *Context) Generate(ds []ast.Decl) (llvm.Module, error) {
 }
 
 // EmitObject generates compiled object file for given AST.
-func (c *Context) EmitObject(ds []ast.Decl) error {
+func (c *Context) EmitObject(outname string, ds []ast.Decl) error {
 	mod, err := c.Generate(ds)
 	membuf, err := c.lltargetMachine.EmitToMemoryBuffer(mod, llvm.ObjectFile)
 	if err != nil {
 		return err
 	}
 	defer membuf.Dispose()
-	err = ioutil.WriteFile("test.o", membuf.Bytes(), 0666)
+	err = ioutil.WriteFile(outname, membuf.Bytes(), 0666)
 	if err != nil {
 		return err
 	}
