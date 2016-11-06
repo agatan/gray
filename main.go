@@ -28,9 +28,8 @@ func main() {
 	}
 	defer ctx.Dispose()
 
-	mod, err := ctx.Generate(ds)
+	err = ctx.EmitObject(ds)
 	if err != nil {
 		panic(err)
 	}
-	mod.Dump()
 }

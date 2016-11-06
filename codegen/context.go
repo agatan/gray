@@ -1,6 +1,8 @@
 package codegen
 
 import (
+	"io/ioutil"
+
 	"github.com/agatan/gray/ast"
 	"github.com/agatan/gray/types"
 
@@ -25,6 +27,9 @@ type Context struct {
 // NewContext returns a new Context instance.
 func NewContext(modname string, toplevelScope *types.Scope, typemap *types.TypeMap) (*Context, error) {
 	if err := llvm.InitializeNativeTarget(); err != nil {
+		return nil, err
+	}
+	if err := llvm.InitializeNativeAsmPrinter(); err != nil {
 		return nil, err
 	}
 	triple := llvm.DefaultTargetTriple()
@@ -67,4 +72,19 @@ func (c *Context) Generate(ds []ast.Decl) (llvm.Module, error) {
 		}
 	}
 	return c.llmodule, nil
+}
+
+// EmitObject generates compiled object file for given AST.
+func (c *Context) EmitObject(ds []ast.Decl) error {
+	mod, err := c.Generate(ds)
+	membuf, err := c.lltargetMachine.EmitToMemoryBuffer(mod, llvm.ObjectFile)
+	if err != nil {
+		return err
+	}
+	defer membuf.Dispose()
+	err = ioutil.WriteFile("test.o", membuf.Bytes(), 0666)
+	if err != nil {
+		return err
+	}
+	return nil
 }
