@@ -57,7 +57,7 @@ var BuiltinFunctions = []struct {
 
 func defBuiltinFunctions() {
 	for _, t := range BuiltinFunctions {
-		defObject(NewFunc(t.Name, t.Sig))
+		defObject(NewBuiltinFunc(t.Name, t.Sig))
 	}
 }
 

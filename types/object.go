@@ -43,9 +43,21 @@ func NewTypeName(name string, typ Type) *TypeName {
 // Func represent a declared function
 type Func struct {
 	object
+	isBuiltin bool
 }
 
 // NewFunc creates a new function object.
 func NewFunc(name string, typ Type) *Func {
 	return &Func{object: object{scope: nil, name: name, typ: typ}}
 }
+
+// NewBuiltinFunc creates a new builtin function object.
+func NewBuiltinFunc(name string, typ Type) *Func {
+	return &Func{
+		object:    object{scope: nil, name: name, typ: typ},
+		isBuiltin: true,
+	}
+}
+
+// IsBuiltin returns true if the Func f is builtin.
+func (f *Func) IsBuiltin() bool { return f.isBuiltin }

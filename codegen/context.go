@@ -94,3 +94,7 @@ func (c *Context) EmitObject(outname string, llmod llvm.Module) error {
 	}
 	return nil
 }
+
+func (c *Context) currentScope() *types.Scope {
+	return c.toplevelScope
+}
