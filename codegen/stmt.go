@@ -14,6 +14,7 @@ func (c *Context) genStmt(s ast.Stmt) {
 		c.genExpr(s.X)
 	case *ast.LetStmt:
 		v := c.genExpr(s.Value)
+		v.SetName(s.Ident.Name)
 		c.valuemap.Insert(s.Ident.Name, v)
 	case *ast.ReturnStmt:
 		if s.X == nil {
