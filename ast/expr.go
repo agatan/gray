@@ -60,7 +60,8 @@ type (
 	// BlockExpr represent block expression.
 	BlockExpr struct {
 		ExprImpl
-		Stmts []Stmt // If empty, the value is Unit.
+		Stmts  []Stmt // If empty, the value is Unit.
+		IsExpr bool   // BlockExpr returns expression or not.
 	}
 
 	// CallExpr represent calling expression.

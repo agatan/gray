@@ -96,6 +96,7 @@ func (c *Checker) inferAndCheckExpr(s *Scope, e ast.Expr) (Type, error) {
 		last := e.Stmts[len(e.Stmts)-1]
 		if le, ok := last.(*ast.ExprStmt); ok {
 			t, err := c.checkExpr(blockScope, le.X)
+			e.IsExpr = true
 			return t, err
 		}
 		if err := c.checkStmt(blockScope, last); err != nil {
