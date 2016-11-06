@@ -58,11 +58,15 @@ func (c *Context) genExpr(e ast.Expr) llvm.Value {
 		if len(e.Stmts) == 0 {
 			return c.unitValue()
 		}
-		if !e.IsExpr {
-			panic("statement block is unimplemented yet")
+		last := e.Stmts[len(e.Stmts)-1]
+		for _, s := range e.Stmts[:len(e.Stmts)-1] {
+			c.genStmt(s)
 		}
-		// TODO: gen statements
-		return c.genExpr(e.Stmts[len(e.Stmts)-1].(*ast.ExprStmt).X)
+		if e.IsExpr {
+			return c.genExpr(last.(*ast.ExprStmt).X)
+		}
+		c.genStmt(last)
+		return c.unitValue()
 	default:
 		panic(fmt.Sprintf("unimplemented %T", e))
 	}
