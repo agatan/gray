@@ -48,6 +48,40 @@ func (c *Context) sigType(sig *types.Signature) llvm.Type {
 	return llvm.FunctionType(result, params, false)
 }
 
+func (c *Context) instTypeName(i *types.InstType) string {
+	bs := []byte(i.Base().Name())
+	bs = append(bs, '<')
+	for i, arg := range i.Args() {
+		if i != 0 {
+			bs = append(bs, ',')
+		}
+		bs = append(bs, []byte(arg.String())...)
+	}
+	bs = append(bs, '>')
+	return string(bs)
+}
+
+func (c *Context) genericType(g *types.GenericType) {
+	if g.Name() != "Ref" {
+		panic("user-defined generic type is unimplemented yet")
+	}
+	for _, i := range g.Instances() {
+		typename := c.instTypeName(i)
+		innerTy := c.genType(i.Args()[0])
+		refty := llvm.PointerType(innerTy, 0)
+		c.typenames[typename] = refty
+	}
+}
+
+func (c *Context) instType(i *types.InstType) llvm.Type {
+	typename := c.instTypeName(i)
+	if ty, ok := c.typenames[typename]; ok {
+		return ty
+	}
+	c.genericType(i.Base())
+	return c.typenames[typename]
+}
+
 func (c *Context) genType(typ types.Type) llvm.Type {
 	switch typ := typ.(type) {
 	case *types.Basic:
@@ -65,6 +99,10 @@ func (c *Context) genType(typ types.Type) llvm.Type {
 		}
 	case *types.Signature:
 		return c.sigType(typ)
+	case *types.GenericType:
+		panic("unreachable: GenericType should be handled only as InstType")
+	case *types.InstType:
+		return c.instType(typ)
 	default:
 		panic(fmt.Sprintf("unimplemented yet: %T", typ))
 	}

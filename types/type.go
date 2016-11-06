@@ -124,6 +124,9 @@ func (g *GenericType) Name() string { return g.name }
 // Params returns the parameters of GenericType g.
 func (g *GenericType) Params() []*TypeName { return g.params }
 
+// Instances returns instances of the GenericType g.
+func (g *GenericType) Instances() []*InstType { return g.instances }
+
 // Instantiate returns a instance of given arguments.
 // If already instantiated, Instantiate returns it.
 // Otherwise, creates a new instance and returns it.

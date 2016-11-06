@@ -25,6 +25,7 @@ type Context struct {
 
 	basicTypes []llvm.Type
 	valuemap   *ValueMap
+	typenames  map[string]llvm.Type
 }
 
 // NewContext returns a new Context instance.
