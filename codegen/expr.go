@@ -54,6 +54,8 @@ func (c *Context) genExpr(e ast.Expr) (llvm.Value, error) {
 		default:
 			panic(fmt.Sprintf("unreachable %#v", e))
 		}
+	case *ast.Ident:
+		return c.valuemap.LookupParent(e.Name), nil
 	case *ast.CallExpr:
 		return c.genCallExpr(e), nil
 	case *ast.BlockExpr:

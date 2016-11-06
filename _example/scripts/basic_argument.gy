@@ -1,4 +1,7 @@
 def argument(x: Int) {
+    print_int(x)
 }
 
-def main() {}
+def main() {
+    argument(2)
+}
